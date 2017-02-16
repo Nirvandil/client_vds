@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="client_vds:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/client_vds_jar</output-path>
+    <root id="archive" name="client_vds.jar">
+      <element id="module-output" name="client_vds" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-validator/commons-validator/1.5.1/commons-validator-1.5.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/jcraft/jsch/0.1.54/jsch-0.1.54.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-net/commons-net/3.5/commons-net-3.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
