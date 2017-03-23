@@ -94,11 +94,12 @@ class LogicFrame
         private List<String> getValidatedDomains(final String doms) throws MainException
             {
                 final List<String> domains = new ArrayList<>(Arrays.asList(doms.split("\n")));
+                domains.replaceAll(String::trim);
                 if (domains.size() > 500) throw new MainException("За один раз можно добавить не более 500 доменов!");
                 for (final String domain : domains)
                     {
                         final DomainValidator validator = DomainValidator.getInstance();
-                        if (!validator.isValid(domain.trim()))
+                        if (!validator.isValid(domain))
                             throw new MainException("Как минимум одно из доменных имён некорректно!");
                     }
                 return domains;
