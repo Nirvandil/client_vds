@@ -2,7 +2,6 @@ package cf.nirvandil.clientvds;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -88,7 +87,7 @@ public class Gui extends Application
         private void initPortField()
             {
                 portField.setTooltip(portFieldTooltip);
-                portField.setMaxWidth(50);
+                portField.setMaxWidth(60);
                 portField.setPromptText("3333");
             }
 
@@ -172,7 +171,7 @@ public class Gui extends Application
 
         private void initGridLayout()
             {
-                root.setAlignment(Pos.CENTER);
+                root.getStyleClass().add("pane");
                 root.setHgap(8);
                 root.setVgap(8);
                 root.setPadding(new Insets(5, 5, 5, 5));
