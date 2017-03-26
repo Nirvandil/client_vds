@@ -42,7 +42,7 @@ class RemovingTask extends AddingTask
                         updateProgress(done, fullWork);
                         try
                             {
-                                Thread.sleep(200);
+                                Thread.sleep(100);
                             }
                         catch (final InterruptedException ie)
                             {
