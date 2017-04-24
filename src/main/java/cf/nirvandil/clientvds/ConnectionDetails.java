@@ -32,7 +32,8 @@ class ConnectionDetails
                         "91.215.152.0/24",
                         "91.215.153.0/24",
                         "91.215.154.0/24",
-                        "91.215.155.0/24"
+                        "91.215.155.0/24",
+                        "185.198.164.0/24"
                 };
         private final String ip;
         private final String pass;
