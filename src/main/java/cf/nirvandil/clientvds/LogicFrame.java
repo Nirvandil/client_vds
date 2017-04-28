@@ -100,7 +100,7 @@ class LogicFrame
                     {
                         final DomainValidator validator = DomainValidator.getInstance();
                         if (!validator.isValid(domain))
-                            throw new MainException("Как минимум одно из доменных имён некорректно!");
+                            throw new MainException("Как минимум одно из доменных имён некорректно!" + domain);
                     }
                 return domains;
             }
