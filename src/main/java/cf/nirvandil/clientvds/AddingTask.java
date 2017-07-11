@@ -80,7 +80,8 @@ class AddingTask extends Task<Map<String, String>>
                                             message = "Указанному пользователю запрещено использовать РНР в этом режиме";
                                             break;
                                         case "ERROR 9":
-                                            message = "Похоже, что домен " + domain + " уже существует на FriendDNS!";
+                                            message = "Похоже, что домен " + domain + " уже существует на FriendDNS!\n" +
+                                                    "(или иная ошибка внеших DNS)";
                                             break;
                                         case "ERROR parsing":
                                             message = "Ошибка при синтаксическом разборе файла .passwd," +

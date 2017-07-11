@@ -71,6 +71,7 @@ class Isp4DomainsManipulator extends AbstractDomainsManipulator {
         }
         else if (state != null && state.contains("ERROR 9"))
             {
+                System.out.println(state);
                 channel.disconnect();
                 return "ERROR 9";
             }
