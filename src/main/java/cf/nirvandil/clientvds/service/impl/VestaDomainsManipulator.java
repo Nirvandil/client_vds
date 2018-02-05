@@ -1,4 +1,4 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.service.impl;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -23,8 +23,8 @@ import java.util.List;
  * Domains manipulator for adding or deleting domains on servers
  * under VestaCP.
  */
-class VestaDomainsManipulator extends AbstractDomainsManipulator {
-    VestaDomainsManipulator(final Session session) {
+public class VestaDomainsManipulator extends AbstractDomainsManipulator {
+    public VestaDomainsManipulator(final Session session) {
         super(session);
     }
 

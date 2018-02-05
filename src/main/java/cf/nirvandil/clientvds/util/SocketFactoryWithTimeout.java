@@ -1,4 +1,4 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.util;
 
 import com.jcraft.jsch.SocketFactory;
 import lombok.SneakyThrows;
@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class SocketFactoryWithTimeout implements SocketFactory {
+
     @SneakyThrows
     public Socket createSocket(String host, int port) {
         Socket socket = new Socket();

@@ -1,5 +1,12 @@
 package cf.nirvandil.clientvds;
 
+import cf.nirvandil.clientvds.exc.MainException;
+import cf.nirvandil.clientvds.model.ConnectionDetails;
+import cf.nirvandil.clientvds.service.DomainsManipulator;
+import cf.nirvandil.clientvds.service.ManipulatorFactory;
+import cf.nirvandil.clientvds.tasks.AddingTask;
+import cf.nirvandil.clientvds.tasks.RemovingTask;
+import cf.nirvandil.clientvds.util.SocketFactoryWithTimeout;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -15,10 +22,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static javafx.scene.control.Alert.AlertType.WARNING;
 
 /**
@@ -38,7 +45,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
  * starts action for remove or add domains by create proper task and reports
  * status operation in the and.
  */
-class LogicFrame {
+public class LogicFrame {
     private final ConnectionDetails details;
     private final ProgressBar progressBar;
     private DomainsManipulator domainsManipulator;
@@ -48,7 +55,7 @@ class LogicFrame {
         this.progressBar = progressBar;
     }
 
-    void MainAction(final String domainsContent, final String phpMod, final String action, final String templatePath)
+    public void MainAction(final String domainsContent, final String phpMod, final String action, final String templatePath)
             throws IOException, JSchException, MainException {
         final List<String> domains = getValidatedDomains(domainsContent);
         // Create domainsManipulator from factory by passing panel and session
@@ -88,7 +95,7 @@ class LogicFrame {
     }
 
     private List<String> getValidatedDomains(final String doms) throws MainException {
-        final List<String> domains = new ArrayList<>(Arrays.asList(doms.split("\n")));
+        final List<String> domains = new ArrayList<>(asList(doms.split("\n")));
         domains.replaceAll(String::trim);
         if (domains.size() > 500) throw new MainException("За один раз можно добавить не более 500 доменов!");
         final DomainValidator validator = DomainValidator.getInstance();

@@ -1,5 +1,6 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.tasks;
 
+import cf.nirvandil.clientvds.service.DomainsManipulator;
 import lombok.SneakyThrows;
 
 import java.util.HashMap;
@@ -21,9 +22,9 @@ import java.util.Map;
  * <p>
  * Task for removing domains
  */
-class RemovingTask extends AddingTask {
-    RemovingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator, final String owner,
-                 final String phpMod, final String templatePath) {
+public class RemovingTask extends AddingTask {
+    public RemovingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator, final String owner,
+                        final String phpMod, final String templatePath) {
         super(domains, ip, domainsManipulator, owner, phpMod, templatePath);
     }
 

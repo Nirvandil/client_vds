@@ -1,5 +1,6 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.service;
 
+import cf.nirvandil.clientvds.exc.MainException;
 import com.jcraft.jsch.JSchException;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.util.List;
  * This interface declares methods, that must contain object for
  * manipulating domains (adding, removing them) and run command on server.
  */
-interface DomainsManipulator {
+public interface DomainsManipulator {
     String addDomain(String domain, String ip, String own, String phpMod, String templatePath) throws IOException, JSchException, MainException;
 
     String removeDomain(String domain, String owner) throws IOException, JSchException, MainException;

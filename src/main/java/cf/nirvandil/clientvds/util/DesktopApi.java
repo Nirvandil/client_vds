@@ -1,4 +1,4 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.util;
 
 import java.awt.*;
 import java.io.IOException;
@@ -23,9 +23,9 @@ import java.util.List;
  * external browser
  */
 
-class DesktopApi {
+public abstract class DesktopApi {
 
-    static boolean browse(final URI uri) {
+    public static boolean browse(final URI uri) {
         return (browseDESKTOP(uri)) || (openSystemSpecific(uri.toString()));
     }
 

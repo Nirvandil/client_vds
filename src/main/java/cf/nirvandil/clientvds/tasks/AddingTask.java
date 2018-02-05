@@ -1,5 +1,6 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.tasks;
 
+import cf.nirvandil.clientvds.service.DomainsManipulator;
 import javafx.concurrent.Task;
 import lombok.SneakyThrows;
 
@@ -22,7 +23,7 @@ import java.util.Map;
  * <p>
  * This is task for adding domains to server.
  */
-class AddingTask extends Task<Map<String, String>> {
+public class AddingTask extends Task<Map<String, String>> {
     final List<String> domains;
     final DomainsManipulator domainsManipulator;
     final String owner;
@@ -30,8 +31,8 @@ class AddingTask extends Task<Map<String, String>> {
     private final String templatePath;
     private final String phpMod;
 
-    AddingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator,
-               final String owner, final String phpMod, final String templatePath) {
+    public AddingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator,
+                      final String owner, final String phpMod, final String templatePath) {
         this.domains = domains;
         this.ip = ip;
         this.domainsManipulator = domainsManipulator;

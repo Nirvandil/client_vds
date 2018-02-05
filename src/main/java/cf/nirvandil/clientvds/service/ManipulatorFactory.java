@@ -1,5 +1,8 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.service;
 
+import cf.nirvandil.clientvds.service.impl.Isp4DomainsManipulator;
+import cf.nirvandil.clientvds.service.impl.Isp5DomainsManipulator;
+import cf.nirvandil.clientvds.service.impl.VestaDomainsManipulator;
 import com.jcraft.jsch.Session;
 
 /**
@@ -18,7 +21,7 @@ import com.jcraft.jsch.Session;
  * Factory for creating manipulator based on panel
  */
 
-abstract class ManipulatorFactory {
+public abstract class ManipulatorFactory {
 
     public static DomainsManipulator createManipulator(final String panel, final Session session) {
         switch (panel) {

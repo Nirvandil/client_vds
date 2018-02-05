@@ -1,5 +1,7 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.service.impl;
 
+import cf.nirvandil.clientvds.exc.MainException;
+import cf.nirvandil.clientvds.service.DomainsManipulator;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;

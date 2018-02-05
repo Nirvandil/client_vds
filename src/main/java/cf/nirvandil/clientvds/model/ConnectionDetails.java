@@ -1,5 +1,6 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.model;
 
+import cf.nirvandil.clientvds.exc.MainException;
 import lombok.Getter;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
@@ -18,20 +19,20 @@ import org.apache.commons.validator.routines.InetAddressValidator;
  * <p>
  * This class encapsulates and validates parameters for connection to server.
  */
-class ConnectionDetails {
+public class ConnectionDetails {
     private final String ip;
     @Getter
     private final String pass;
     @Getter
     private final int port;
 
-    ConnectionDetails(final String ip, final String pass, final int port) {
+    public ConnectionDetails(final String ip, final String pass, final int port) {
         this.ip = ip;
         this.pass = pass;
         this.port = port;
     }
 
-    String getIp() throws MainException {
+    public String getIp() throws MainException {
         validateIpFormat();
         return this.ip;
     }

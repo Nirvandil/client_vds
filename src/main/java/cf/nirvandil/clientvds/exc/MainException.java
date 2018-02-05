@@ -1,4 +1,4 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.exc;
 
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -20,13 +20,13 @@ import javafx.stage.Stage;
  * Class for visualise occurs exception by showing dialog box
  */
 
-class MainException extends Exception {
-    MainException(final String message) {
+public class MainException extends Exception {
+    public MainException(final String message) {
         super(message);
         notifyError(message);
     }
 
-    MainException(final String message, final String header) {
+    public MainException(final String message, final String header) {
         super(message);
         notifyError(message, header);
     }

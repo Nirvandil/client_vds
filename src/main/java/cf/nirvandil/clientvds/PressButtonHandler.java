@@ -1,5 +1,7 @@
 package cf.nirvandil.clientvds;
 
+import cf.nirvandil.clientvds.exc.MainException;
+import cf.nirvandil.clientvds.model.ConnectionDetails;
 import com.jcraft.jsch.JSchException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,7 +31,7 @@ import java.io.IOException;
  * Handles pressing button. Contains JavaFX elements and provides methods
  * to get data for start needed action.
  */
-class PressButtonHandler implements EventHandler<ActionEvent> {
+public class PressButtonHandler implements EventHandler<ActionEvent> {
     private final TextField ipField;
     private final PasswordField passField;
     private final TextField portField;
@@ -69,10 +71,10 @@ class PressButtonHandler implements EventHandler<ActionEvent> {
                 } catch (final NumberFormatException nfe) {
                     throw new MainException("Некорректно указан порт для подключения!");
                 } catch (final MainException me) {
-                    System.err.println("Catches simple cf.nirvandil.clientvds.MainException");
+                    System.err.println("Catches simple cf.nirvandil.clientvds.exc.MainException");
                 }
             } catch (final MainException me) {
-                System.err.println("Catches outer cf.nirvandil.clientvds.MainException");
+                System.err.println("Catches outer cf.nirvandil.clientvds.exc.MainException");
             }
         }
     }

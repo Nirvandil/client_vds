@@ -1,5 +1,6 @@
-package cf.nirvandil.clientvds;
+package cf.nirvandil.clientvds.service.impl;
 
+import cf.nirvandil.clientvds.exc.MainException;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -24,8 +25,8 @@ import java.util.List;
  * <p>
  * Concrete class for adding domains to servers under ISPmanager 4 Lite
  */
-class Isp4DomainsManipulator extends AbstractDomainsManipulator {
-    Isp4DomainsManipulator(final Session session) {
+public class Isp4DomainsManipulator extends AbstractDomainsManipulator {
+    public Isp4DomainsManipulator(final Session session) {
         super(session);
     }
 
