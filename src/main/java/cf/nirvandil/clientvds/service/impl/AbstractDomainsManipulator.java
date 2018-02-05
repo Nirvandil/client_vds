@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
+
 /**
  * Created by Vladimir Sukharev aka Nirvandil on 07.09.2016.
  * This program is free software: you can redistribute it and/or modify
@@ -56,13 +58,13 @@ abstract class AbstractDomainsManipulator implements DomainsManipulator {
         return out;
     }
 
-    ChannelExec getChannelExec() throws JSchException {
+    private ChannelExec getChannelExec() throws JSchException {
         return (ChannelExec) session.openChannel("exec");
     }
 
     @Override
     public void reportDone() {
-        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        final Alert alert = new Alert(INFORMATION);
         alert.setTitle("Выполнено");
         alert.setContentText("Указанные домены обработаны!");
         alert.setHeaderText("Операция завершена успешно");

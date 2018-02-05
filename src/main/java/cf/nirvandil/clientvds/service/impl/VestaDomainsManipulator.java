@@ -3,6 +3,7 @@ package cf.nirvandil.clientvds.service.impl;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
  * Domains manipulator for adding or deleting domains on servers
  * under VestaCP.
  */
+@Slf4j
 public class VestaDomainsManipulator extends AbstractDomainsManipulator {
     public VestaDomainsManipulator(final Session session) {
         super(session);
@@ -31,9 +33,10 @@ public class VestaDomainsManipulator extends AbstractDomainsManipulator {
     @Override
     @SneakyThrows
     public String addDomain(final String domain, final String ip, final String owner, final String phpMod, String templatePath) {
+        log.trace("Incoming params for adding: ", domain, ip, owner, phpMod, templatePath);
         String commString = "VESTA=/usr/local/vesta /usr/local/vesta/bin/v-add-web-domain " +
                 owner + " " + domain + " " + ip;
-        commString += " ;VESTA=/usr/local/vesta /usr/local/vesta/bin/v-add-dns-domain " +
+        commString += " ; VESTA=/usr/local/vesta /usr/local/vesta/bin/v-add-dns-domain " +
                 owner + " " + domain + " " + ip;
         //If not CGI -> as module
         if (!phpMod.contains("CGI")) {
@@ -46,8 +49,10 @@ public class VestaDomainsManipulator extends AbstractDomainsManipulator {
                     + destPath + " && chown -R " + owner + ":" + owner + " " + destPath;
             commString += templateCopyCommand;
         }
+        log.debug(commString);
         List<String> commandOutput = getCommandOutput(commString);
         for (String answer : commandOutput) {
+            log.debug(answer);
             if (answer != null && answer.contains("exist")) {
                 return "exist";
             }

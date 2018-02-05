@@ -1,5 +1,7 @@
 package cf.nirvandil.clientvds.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -22,28 +24,32 @@ import java.util.List;
  * This class is used for platform-dependent opening hyperlinks in
  * external browser
  */
-
+@Slf4j
 public abstract class DesktopApi {
 
-    public static boolean browse(final URI uri) {
-        return (browseDESKTOP(uri)) || (openSystemSpecific(uri.toString()));
+    public static void browse(final URI uri) {
+        if ((!browseDESKTOP(uri))) {
+            openSystemSpecific(uri.toString());
+        }
     }
 
-    private static boolean openSystemSpecific(final String what) {
+    private static void openSystemSpecific(final String what) {
 
         final EnumOS os = getOs();
 
         if (os.isLinux()) {
-            if (runCommand("kde-open", "%s", what)) return true;
-            if (runCommand("gnome-open", "%s", what)) return true;
-            if (runCommand("xdg-open", "%s", what)) return true;
+            if (runCommand("kde-open", "%s", what)) return;
+            if (runCommand("gnome-open", "%s", what)) return;
+            if (runCommand("xdg-open", "%s", what)) return;
         }
 
         if (os.isMac()) {
-            if (runCommand("open", "%s", what)) return true;
+            if (runCommand("open", "%s", what)) return;
         }
 
-        return os.isWindows() && runCommand("explorer", "%s", what);
+        if (os.isWindows()) {
+            runCommand("explorer", "%s", what);
+        }
 
     }
 
@@ -112,12 +118,12 @@ public abstract class DesktopApi {
     }
 
     private static void logErr(final String msg, final Throwable t) {
-        System.err.println(msg);
-        t.printStackTrace();
+        log.error(msg);
+        log.error("{}", t);
     }
 
     private static void logErr(final String msg) {
-        System.err.println(msg);
+        log.error(msg);
     }
 
     private static EnumOS getOs() {

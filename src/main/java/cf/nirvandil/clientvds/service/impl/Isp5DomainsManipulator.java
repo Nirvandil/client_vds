@@ -1,13 +1,11 @@
 package cf.nirvandil.clientvds.service.impl;
 
 import cf.nirvandil.clientvds.exc.MainException;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 /**
@@ -25,6 +23,7 @@ import java.util.List;
  * <p>
  * Concrete class for adding domains to servers under ISPmanager 5 Lite
  */
+@Slf4j
 public class Isp5DomainsManipulator extends AbstractDomainsManipulator {
 
     public Isp5DomainsManipulator(final Session session) {
@@ -32,37 +31,34 @@ public class Isp5DomainsManipulator extends AbstractDomainsManipulator {
     }
 
     @Override
-    public String addDomain(final String domain, final String ip, final String own, String phpMod, String templatePath)
+    public String addDomain(final String domain, final String ip, final String owner, String phpMod, String templatePath)
             throws IOException, JSchException {
+        log.trace("Incoming params for adding: ", domain, ip, owner, phpMod, templatePath);
         if (phpMod.contains("cgi"))
             phpMod = "php_mode_cgi";
         else
             phpMod = "php_mode_mod";
         String commString = "/usr/local/mgr5/sbin/mgrctl -m ispmgr webdomain.edit" + " name=" + domain + " alias=www." + domain +
-                " docroot=auto " + "owner=" + own + " email=admin@" + domain + " ip=" + ip +
+                " docroot=auto " + "owner=" + owner + " email=admin@" + domain + " ip=" + ip +
                 "php=on php_mode=" + phpMod + " sok=ok";
-        final ChannelExec channel = super.getChannelExec();
-        final BufferedReader in = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         // Handle template for site
         if (templatePath.length() > 1 && checkPathExist(templatePath)) {
-            String destPath = constructDomainPath(own, domain);
+            String destPath = constructDomainPath(owner, domain);
             String templateCopyCommand = " && shopt -s dotglob && " + "\\cp -r " + templatePath + "* "
-                    + destPath + " && chown -R " + own + ":" + own + " " + destPath;
+                    + destPath + " && chown -R " + owner + ":" + owner + " " + destPath;
             commString += templateCopyCommand;
         }
-        channel.setCommand(commString);
-        channel.connect();
-        final String answer = in.readLine();
-        if (answer != null && answer.contains("ERROR exists")) {
-            channel.disconnect();
-            return "ERROR 2";
-        } else if (answer != null && answer.contains("ERROR limit")) {
-            channel.disconnect();
-            return "ERROR limit";
-        } else {
-            channel.disconnect();
-            return "";
+        log.debug(commString);
+        List<String> commandOutput = getCommandOutput(commString);
+        for (String answer : commandOutput) {
+            log.debug(answer);
+            if (answer != null && answer.contains("ERROR exists")) {
+                return "ERROR 2";
+            } else if (answer != null && answer.contains("ERROR limit")) {
+                return "ERROR limit";
+            }
         }
+        return "";
     }
 
     @Override

@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  * Class for visualise occurs exception by showing dialog box
  */
 
-public class MainException extends Exception {
+public class MainException extends RuntimeException {
     public MainException(final String message) {
         super(message);
         notifyError(message);

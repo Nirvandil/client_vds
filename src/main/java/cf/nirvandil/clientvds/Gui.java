@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,6 +40,7 @@ import java.net.URISyntaxException;
  * handlers for buttons. Also it's JavaFX Application start point.
  */
 
+@Slf4j
 public class Gui extends Application {
     private final GridPane root = new GridPane();
     private final TextField ipField = new TextField();
@@ -111,7 +113,7 @@ public class Gui extends Application {
                         "http://wiki.friendhosting.net/index.php?title=Массовое_добавление_" +
                                 "доменов_на_сервер_с_ISPmanager_или_VESTA"));
             } catch (final URISyntaxException urie) {
-                System.err.println("Catch URI exception");
+                log.error("{}", urie);
             }
         });
     }
@@ -148,7 +150,7 @@ public class Gui extends Application {
             try {
                 DesktopApi.browse(new URI(friendURI));
             } catch (final URISyntaxException urie) {
-                System.err.println("Catch URI exception");
+                log.error("{}", urie);
             }
         }));
         final Tooltip hyperlinkTooltip = new Tooltip(friendURI);

@@ -12,6 +12,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
@@ -31,7 +32,9 @@ import java.io.IOException;
  * Handles pressing button. Contains JavaFX elements and provides methods
  * to get data for start needed action.
  */
+@Slf4j
 public class PressButtonHandler implements EventHandler<ActionEvent> {
+    private static final String MESSAGE_EMPTY_FIELDS = "Все поля должны быть заполнены!";
     private final TextField ipField;
     private final PasswordField passField;
     private final TextField portField;
@@ -53,47 +56,46 @@ public class PressButtonHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(final ActionEvent actionEvent) {
+        validateInput();
         final String action = ((Button) actionEvent.getSource()).getText();
-        {
+        try {
             try {
-                try {
-                    final LogicFrame logicFrame = new LogicFrame(new ConnectionDetails(getIp(), getPass(), getPort()), progressBar);
-                    String templatePath = templateField.getText();
-                    if (!templatePath.endsWith("/"))
-                        templatePath += "/";
-                    logicFrame
-                            .MainAction(domainsAreaContent.getText(),
-                                    ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath);
-                } catch (final IOException ioe) {
-                    throw new MainException("Произошла ошибка ввода-вывода, проверьте наличие подключения!");
-                } catch (final JSchException jshe) {
-                    throw new MainException("Произошла ошибка при подключении, проверьте введённые данные!");
-                } catch (final NumberFormatException nfe) {
-                    throw new MainException("Некорректно указан порт для подключения!");
-                } catch (final MainException me) {
-                    System.err.println("Catches simple cf.nirvandil.clientvds.exc.MainException");
-                }
+                final LogicFrame logicFrame = new LogicFrame(new ConnectionDetails(getIp(), getPass(), getPort()), progressBar);
+                String templatePath = templateField.getText();
+                if (!templatePath.endsWith("/"))
+                    templatePath += "/";
+                logicFrame
+                        .MainAction(domainsAreaContent.getText(),
+                                ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath);
+            } catch (final IOException ioe) {
+                throw new MainException("Произошла ошибка ввода-вывода, проверьте наличие подключения!");
+            } catch (final JSchException jshe) {
+                throw new MainException("Произошла ошибка при подключении, проверьте введённые данные!");
+            } catch (final NumberFormatException nfe) {
+                throw new MainException("Некорректно указан порт для подключения!");
             } catch (final MainException me) {
-                System.err.println("Catches outer cf.nirvandil.clientvds.exc.MainException");
+                log.error("Catches simple cf.nirvandil.clientvds.exc.MainException");
             }
+        } catch (final MainException me) {
+            log.error("{}", me);
+        }
+    }
+
+    private void validateInput() {
+        if (ipField.getText().isEmpty() || passField.getText().isEmpty() || portField.getText().isEmpty()) {
+            throw new MainException(MESSAGE_EMPTY_FIELDS);
         }
     }
 
     private String getIp() throws MainException {
-        if (ipField.getText().equals(""))
-            throw new MainException("Все поля должны быть заполнены!");
-        else return ipField.getText();
+        return ipField.getText();
     }
 
     private String getPass() throws MainException {
-        if (passField.getText().equals(""))
-            throw new MainException("Все поля должны быть заполнены!");
-        else return passField.getText();
+        return passField.getText();
     }
 
     private int getPort() throws MainException {
-        if (portField.getText().equals(""))
-            throw new MainException("Все поля должны быть заполнены!");
-        else return Integer.parseInt(portField.getText());
+        return Integer.parseInt(portField.getText());
     }
 }
