@@ -6,7 +6,7 @@
 
     <groupId>friendhosting</groupId>
     <artifactId>client_vds</artifactId>
-    <version>1.8.3.2</version>
+    <version>1.9.0</version>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -64,6 +64,14 @@
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
             <version>0.1.54</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.20</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

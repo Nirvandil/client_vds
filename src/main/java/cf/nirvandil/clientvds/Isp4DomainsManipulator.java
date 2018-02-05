@@ -31,7 +31,7 @@ class Isp4DomainsManipulator extends AbstractDomainsManipulator {
 
     @Override
     public String addDomain(final String domain, final String ip, final String own, String phpMod, String templatePath)
-            throws IOException, JSchException, MainException {
+            throws IOException, JSchException {
         if (phpMod.contains("CGI"))
             phpMod = "phpcgi";
         else phpMod = "phpmod";
@@ -41,8 +41,7 @@ class Isp4DomainsManipulator extends AbstractDomainsManipulator {
                 " domain=" + domain + " alias=www." + domain + " docroot=auto owner=" + own + " admin=admin@" + domain +
                 " autosubdomain=asdnone ip=" + ip + " php=" + phpMod + " sok=ok";
         // Handle template for site TODO: move it to interface/abstract class
-        if (templatePath.length() > 1 && checkPathExist(templatePath))
-        {
+        if (templatePath.length() > 1 && checkPathExist(templatePath)) {
             String destPath = constructDomainPath(own, domain);
             String templateCopyCommand = " && shopt -s dotglob && " + "\\cp -r " + templatePath + "* "
                     + destPath + " && chown -R " + own + ":" + own + " " + destPath;
@@ -54,8 +53,7 @@ class Isp4DomainsManipulator extends AbstractDomainsManipulator {
         if (state != null && state.contains("ERROR 2")) {
             channel.disconnect();
             return "ERROR 2";
-        }
-        else if (state != null && state.contains("parsing")) {
+        } else if (state != null && state.contains("parsing")) {
             final String fileToRemove = state.substring(state.indexOf("'") + 1, state.lastIndexOf("'"));
             handleParsingError(fileToRemove);
             final String out = getCommandOutput(commString).get(0);
@@ -64,41 +62,37 @@ class Isp4DomainsManipulator extends AbstractDomainsManipulator {
                 return "ERROR parsing";
             }
             channel.disconnect();
-        }
-        else if (state != null && state.contains("ERROR 8")) {
+        } else if (state != null && state.contains("ERROR 8")) {
             channel.disconnect();
             return "ERROR 8";
-        }
-        else if (state != null && state.contains("ERROR 9"))
-            {
-                channel.disconnect();
-                return "ERROR 9";
-            }
-        else channel.disconnect();
+        } else if (state != null && state.contains("ERROR 9")) {
+            channel.disconnect();
+            return "ERROR 9";
+        } else channel.disconnect();
         return "";
     }
 
     @Override
     public List<String> getUsers() throws IOException, JSchException, MainException {
         final List<String> users = getCommandOutput("/usr/local/ispmgr/sbin/mgrctl user | cut -f 2 -d '='| cut -f 1 -d ' '");
-        if (users.isEmpty()) throw new MainException("Похоже, что Вы не добавили ни одного пользователя в панель управления!");
+        if (users.isEmpty())
+            throw new MainException("Похоже, что Вы не добавили ни одного пользователя в панель управления!");
         else return users;
     }
 
     @Override
-    public String removeDomain(final String domain, final String owner) throws IOException, JSchException, MainException {
+    public String removeDomain(final String domain, final String owner) throws IOException, JSchException {
         //Return just first line of output
         return getCommandOutput("/usr/local/ispmgr/sbin/mgrctl -m ispmgr wwwdomain.delete elid=" + domain +
                 " wwwdomain.delete.confirm elid=" + domain + " sok=ok").get(0);
     }
 
-    private void handleParsingError(final String path) throws IOException, JSchException, MainException
-        {
+    private void handleParsingError(final String path) throws IOException, JSchException {
         getCommandOutput("rm -f " + path);
     }
+
     @Override
-    public String constructDomainPath(String owner, String domainName)
-    {
-        return "/var/www/" + owner +"/data/www/" + domainName + "/";
+    public String constructDomainPath(String owner, String domainName) {
+        return "/var/www/" + owner + "/data/www/" + domainName + "/";
     }
 }

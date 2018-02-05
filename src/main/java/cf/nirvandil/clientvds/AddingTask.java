@@ -18,80 +18,71 @@ import java.util.Map;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * This is task for adding domains to server.
  */
-class AddingTask extends Task<Map<String, String>>
-    {
-        final List<String> domains;
-        private final String ip;
-        final DomainsManipulator domainsManipulator;
-        final String owner;
-        private final String templatePath;
-        private final String phpMod;
+class AddingTask extends Task<Map<String, String>> {
+    final List<String> domains;
+    final DomainsManipulator domainsManipulator;
+    final String owner;
+    private final String ip;
+    private final String templatePath;
+    private final String phpMod;
 
-        AddingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator,
-                   final String owner, final String phpMod, final String templatePath)
-            {
-                this.domains = domains;
-                this.ip = ip;
-                this.domainsManipulator = domainsManipulator;
-                this.owner = owner;
-                this.phpMod = phpMod;
-                this.templatePath = templatePath;
-            }
-
-        @Override
-        protected Map<String, String> call() throws Exception
-            {
-                final int fullWork = domains.size();
-                int done = 0;
-                domainsManipulator.getUsers();
-                //Into map we will put any errors that occurs while adding domain
-                final Map<String, String> result = new HashMap<>();
-                for (final String domain : domains)
-                    {
-                        final String returnCode = domainsManipulator.addDomain(domain, ip, owner, phpMod, templatePath);
-                        done += 1;
-                        updateProgress(done, fullWork);
-                        try
-                            {
-                                Thread.sleep(100);
-                            }
-                        catch (final InterruptedException ie)
-                            {
-                                ie.printStackTrace();
-                            }
-                        if (!returnCode.equals(""))
-                            {
-                                String message = "";
-                                switch (returnCode)
-                                    {
-                                        case "ERROR 2":
-                                            message = "Похоже, что домен " + domain + " уже существует в \nпанели управления";
-                                            break;
-                                        case "exist":
-                                            message = "Похоже, что домен " + domain + " уже существует в \nпанели управления";
-                                            break;
-                                        case "ERROR limit":
-                                            message = "Превышено ограничение на число доменов для указанного пользователя";
-                                            break;
-                                        case "ERROR 8":
-                                            message = "Указанному пользователю запрещено использовать РНР в этом режиме";
-                                            break;
-                                        case "ERROR 9":
-                                            message = "Похоже, что домен " + domain + " уже существует на FriendDNS!\n" +
-                                                    "(или иная ошибка внеших DNS)";
-                                            break;
-                                        case "ERROR parsing":
-                                            message = "Ошибка при синтаксическом разборе файла .passwd," +
-                                                    "и автоматическое исправление не удалось.\nНеобходимо попробовать добавить домен " +
-                                                    "вручную, после чего удалить файл, на который укажет ISPmanager 4.";
-                                            break;
-                                    }
-                                result.put(domain, message);
-                            }
-                    }
-                return result;
-            }
+    AddingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator,
+               final String owner, final String phpMod, final String templatePath) {
+        this.domains = domains;
+        this.ip = ip;
+        this.domainsManipulator = domainsManipulator;
+        this.owner = owner;
+        this.phpMod = phpMod;
+        this.templatePath = templatePath;
     }
+
+    @Override
+    protected Map<String, String> call() throws Exception {
+        final int fullWork = domains.size();
+        int done = 0;
+        domainsManipulator.getUsers();
+        //Into map we will put any errors that occurs while adding domain
+        final Map<String, String> result = new HashMap<>();
+        for (final String domain : domains) {
+            final String returnCode = domainsManipulator.addDomain(domain, ip, owner, phpMod, templatePath);
+            done += 1;
+            updateProgress(done, fullWork);
+            try {
+                Thread.sleep(100);
+            } catch (final InterruptedException ie) {
+                ie.printStackTrace();
+            }
+            if (!returnCode.equals("")) {
+                String message = "";
+                switch (returnCode) {
+                    case "ERROR 2":
+                        message = "Похоже, что домен " + domain + " уже существует в \nпанели управления";
+                        break;
+                    case "exist":
+                        message = "Похоже, что домен " + domain + " уже существует в \nпанели управления";
+                        break;
+                    case "ERROR limit":
+                        message = "Превышено ограничение на число доменов для указанного пользователя";
+                        break;
+                    case "ERROR 8":
+                        message = "Указанному пользователю запрещено использовать РНР в этом режиме";
+                        break;
+                    case "ERROR 9":
+                        message = "Похоже, что домен " + domain + " уже существует на FriendDNS!\n" +
+                                "(или иная ошибка внеших DNS)";
+                        break;
+                    case "ERROR parsing":
+                        message = "Ошибка при синтаксическом разборе файла .passwd," +
+                                "и автоматическое исправление не удалось.\nНеобходимо попробовать добавить домен " +
+                                "вручную, после чего удалить файл, на который укажет ISPmanager 4.";
+                        break;
+                }
+                result.put(domain, message);
+            }
+        }
+        return result;
+    }
+}

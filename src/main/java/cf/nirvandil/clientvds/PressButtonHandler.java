@@ -3,7 +3,13 @@ package cf.nirvandil.clientvds;
 import com.jcraft.jsch.JSchException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 
 import java.io.IOException;
 
@@ -19,91 +25,73 @@ import java.io.IOException;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * Handles pressing button. Contains JavaFX elements and provides methods
  * to get data for start needed action.
  */
-class PressButtonHandler implements EventHandler<ActionEvent>
-    {
-        private final TextField ipField;
-        private final PasswordField passField;
-        private final TextField portField;
-        private final TextField templateField;
-        private final ProgressBar progressBar;
-        private final TextArea domainsAreaContent;
-        private final ToggleGroup phpMode;
+class PressButtonHandler implements EventHandler<ActionEvent> {
+    private final TextField ipField;
+    private final PasswordField passField;
+    private final TextField portField;
+    private final TextField templateField;
+    private final ProgressBar progressBar;
+    private final TextArea domainsAreaContent;
+    private final ToggleGroup phpMode;
 
-        PressButtonHandler(final TextField ipField, final PasswordField passField, final TextField portField, final ProgressBar progressBar,
-                           final TextArea domainsAreaContent, final ToggleGroup phpMode, final TextField templateField)
-            {
-                this.ipField = ipField;
-                this.passField = passField;
-                this.portField = portField;
-                this.templateField = templateField;
-                this.progressBar = progressBar;
-                this.domainsAreaContent = domainsAreaContent;
-                this.phpMode = phpMode;
-            }
-
-        @Override
-        public void handle(final ActionEvent actionEvent)
-            {
-                final String action = ((Button) actionEvent.getSource()).getText();
-                {
-                    try
-                        {
-                            try
-                                {
-                                    final LogicFrame logicFrame = new LogicFrame(new ConnectionDetails(getIp(), getPass(), getPort()), progressBar);
-                                    String templatePath = templateField.getText();
-                                    if (!templatePath.endsWith("/"))
-                                        templatePath += "/";
-                                    logicFrame
-                                            .MainAction(domainsAreaContent.getText(),
-                                                    ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath);
-                                }
-                            catch (final IOException ioe)
-                                {
-                                    throw new MainException("Произошла ошибка ввода-вывода, проверьте наличие подключения!");
-                                }
-                            catch (final JSchException jshe)
-                                {
-                                    throw new MainException("Произошла ошибка при подключении, проверьте введённые данные!");
-                                }
-                            catch (final NumberFormatException nfe)
-                                {
-                                    throw new MainException("Некорректно указан порт для подключения!");
-                                }
-                            catch (final MainException me)
-                                {
-                                    System.err.println("Catches simple cf.nirvandil.clientvds.MainException");
-                                }
-                        }
-                    catch (final MainException me)
-                        {
-                            System.err.println("Catches outer cf.nirvandil.clientvds.MainException");
-                        }
-                }
-            }
-
-        private String getIp() throws MainException
-            {
-                if (ipField.getText().equals(""))
-                    throw new MainException("Все поля должны быть заполнены!");
-                else return ipField.getText();
-            }
-
-        private String getPass() throws MainException
-            {
-                if (passField.getText().equals(""))
-                    throw new MainException("Все поля должны быть заполнены!");
-                else return passField.getText();
-            }
-
-        private int getPort() throws MainException
-            {
-                if (portField.getText().equals(""))
-                    throw new MainException("Все поля должны быть заполнены!");
-                else return Integer.parseInt(portField.getText());
-            }
+    PressButtonHandler(final TextField ipField, final PasswordField passField, final TextField portField, final ProgressBar progressBar,
+                       final TextArea domainsAreaContent, final ToggleGroup phpMode, final TextField templateField) {
+        this.ipField = ipField;
+        this.passField = passField;
+        this.portField = portField;
+        this.templateField = templateField;
+        this.progressBar = progressBar;
+        this.domainsAreaContent = domainsAreaContent;
+        this.phpMode = phpMode;
     }
+
+    @Override
+    public void handle(final ActionEvent actionEvent) {
+        final String action = ((Button) actionEvent.getSource()).getText();
+        {
+            try {
+                try {
+                    final LogicFrame logicFrame = new LogicFrame(new ConnectionDetails(getIp(), getPass(), getPort()), progressBar);
+                    String templatePath = templateField.getText();
+                    if (!templatePath.endsWith("/"))
+                        templatePath += "/";
+                    logicFrame
+                            .MainAction(domainsAreaContent.getText(),
+                                    ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath);
+                } catch (final IOException ioe) {
+                    throw new MainException("Произошла ошибка ввода-вывода, проверьте наличие подключения!");
+                } catch (final JSchException jshe) {
+                    throw new MainException("Произошла ошибка при подключении, проверьте введённые данные!");
+                } catch (final NumberFormatException nfe) {
+                    throw new MainException("Некорректно указан порт для подключения!");
+                } catch (final MainException me) {
+                    System.err.println("Catches simple cf.nirvandil.clientvds.MainException");
+                }
+            } catch (final MainException me) {
+                System.err.println("Catches outer cf.nirvandil.clientvds.MainException");
+            }
+        }
+    }
+
+    private String getIp() throws MainException {
+        if (ipField.getText().equals(""))
+            throw new MainException("Все поля должны быть заполнены!");
+        else return ipField.getText();
+    }
+
+    private String getPass() throws MainException {
+        if (passField.getText().equals(""))
+            throw new MainException("Все поля должны быть заполнены!");
+        else return passField.getText();
+    }
+
+    private int getPort() throws MainException {
+        if (portField.getText().equals(""))
+            throw new MainException("Все поля должны быть заполнены!");
+        else return Integer.parseInt(portField.getText());
+    }
+}

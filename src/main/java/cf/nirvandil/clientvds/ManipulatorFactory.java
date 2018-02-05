@@ -14,36 +14,24 @@ import com.jcraft.jsch.Session;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * Factory for creating manipulator based on panel
  */
 
 //Singleton, because we need only one factory for adders
-class ManipulatorFactory
-    {
-        private static final ManipulatorFactory manipulatorFactory = new ManipulatorFactory();
+class ManipulatorFactory {
 
-        static ManipulatorFactory getInstance()
-            {
-                return manipulatorFactory;
-            }
-
-        private ManipulatorFactory()
-            {
-            }
-
-        DomainsManipulator createManipulator(final String panel, final Session session)
-            {
-                switch (panel){
-                    case "vesta":
-                        return new VestaDomainsManipulator(session);
-                    case "isp4":
-                        return new Isp4DomainsManipulator(session);
-                    case "isp5":
-                        return new Isp5DomainsManipulator(session);
-                    default:
-                        //if unknown(?!) return ISP4
-                        return new Isp4DomainsManipulator(session);
-                }
-            }
+    public static DomainsManipulator createManipulator(final String panel, final Session session) {
+        switch (panel) {
+            case "vesta":
+                return new VestaDomainsManipulator(session);
+            case "isp4":
+                return new Isp4DomainsManipulator(session);
+            case "isp5":
+                return new Isp5DomainsManipulator(session);
+            default:
+                //if unknown(?!) return ISP4
+                return new Isp4DomainsManipulator(session);
+        }
     }
+}

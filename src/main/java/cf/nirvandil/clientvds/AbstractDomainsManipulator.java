@@ -27,72 +27,64 @@ import java.util.Optional;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * This is abstract class, that implements some common futures for all
  * domains manipulators
  */
-abstract class AbstractDomainsManipulator implements DomainsManipulator
-    {
-        private final Session session;
+abstract class AbstractDomainsManipulator implements DomainsManipulator {
+    private final Session session;
 
-        AbstractDomainsManipulator(final Session session)
-            {
-                this.session = session;
-            }
-
-        @Override
-        public List<String> getCommandOutput(final String command) throws IOException, JSchException, MainException
-            {
-                final ChannelExec exec = getChannelExec();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
-                exec.setCommand(command);
-                exec.connect();
-                final List<String> out = new ArrayList<>();
-                String line;
-                while ((line = reader.readLine()) != null)
-                    out.add(line);
-                return out;
-            }
-
-        ChannelExec getChannelExec() throws JSchException
-            {
-                return (ChannelExec) session.openChannel("exec");
-            }
-
-        @Override
-        public void reportDone()
-            {
-                final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Выполнено");
-                alert.setContentText("Указанные домены обработаны!");
-                alert.setHeaderText("Операция завершена успешно");
-                final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                alert.showAndWait();
-            }
-
-        @Override
-        public String askUserOfPanel(final List<String> users) throws IOException, JSchException, MainException
-            {
-                final ChoiceDialog<String> dialog = new ChoiceDialog<>(users.get(0), users);
-                dialog.setTitle("Владелец");
-                dialog.setHeaderText("Укажите, какому пользователю в\nпанели управления будут добавлены домены");
-                dialog.setContentText("Имя пользователя: ");
-                final Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                final Optional<String> result = dialog.showAndWait();
-                if (result.isPresent())
-                    {
-                        return result.get();
-                    }
-                else
-                    throw new MainException("Необходимо обязательно указывать пользователя!");
-            }
-
-        @Override
-        public boolean checkPathExist(String path) throws  IOException, JSchException, MainException
-        {
-            return ((Integer.parseInt( getCommandOutput("test -e " + path + " && echo 0").get(0)) == 0));
-        }
-        public abstract String constructDomainPath(String owner, String domainName);
+    AbstractDomainsManipulator(final Session session) {
+        this.session = session;
     }
+
+    @Override
+    public List<String> getCommandOutput(final String command) throws IOException, JSchException {
+        final ChannelExec exec = getChannelExec();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+        exec.setCommand(command);
+        exec.connect();
+        final List<String> out = new ArrayList<>();
+        String line;
+        while ((line = reader.readLine()) != null)
+            out.add(line);
+        return out;
+    }
+
+    ChannelExec getChannelExec() throws JSchException {
+        return (ChannelExec) session.openChannel("exec");
+    }
+
+    @Override
+    public void reportDone() {
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Выполнено");
+        alert.setContentText("Указанные домены обработаны!");
+        alert.setHeaderText("Операция завершена успешно");
+        final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+        alert.showAndWait();
+    }
+
+    @Override
+    public String askUserOfPanel(final List<String> users) throws MainException {
+        final ChoiceDialog<String> dialog = new ChoiceDialog<>(users.get(0), users);
+        dialog.setTitle("Владелец");
+        dialog.setHeaderText("Укажите, какому пользователю в\nпанели управления будут добавлены домены");
+        dialog.setContentText("Имя пользователя: ");
+        final Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+        final Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        } else
+            throw new MainException("Необходимо обязательно указывать пользователя!");
+    }
+
+    @Override
+    public boolean checkPathExist(String path) throws IOException, JSchException {
+        return ((Integer.parseInt(getCommandOutput("test -e " + path + " && echo 0").get(0)) == 0));
+    }
+
+    public abstract String constructDomainPath(String owner, String domainName);
+}

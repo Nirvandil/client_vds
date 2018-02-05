@@ -16,43 +16,38 @@ import javafx.stage.Stage;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * Class for visualise occurs exception by showing dialog box
  */
 
-class MainException extends Exception
-    {
-        MainException(final String message)
-            {
-                super(message);
-                notifyError(message);
-            }
-
-        MainException(final String message, final String header)
-            {
-                super(message);
-                notifyError(message, header);
-            }
-
-        private void notifyError(final String error)
-            {
-                final Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Ошибка");
-                alert.setHeaderText("К сожалению, возникла ошибка, её подробности описаны ниже");
-                alert.setContentText(error);
-                final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                alert.showAndWait();
-            }
-
-        private void notifyError(final String error, final String header)
-            {
-                final Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Ошибка");
-                alert.setHeaderText(header);
-                alert.setContentText(error);
-                final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                alert.showAndWait();
-            }
+class MainException extends Exception {
+    MainException(final String message) {
+        super(message);
+        notifyError(message);
     }
+
+    MainException(final String message, final String header) {
+        super(message);
+        notifyError(message, header);
+    }
+
+    private void notifyError(final String error) {
+        final Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText("К сожалению, возникла ошибка, её подробности описаны ниже");
+        alert.setContentText(error);
+        final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+        alert.showAndWait();
+    }
+
+    private void notifyError(final String error, final String header) {
+        final Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Ошибка");
+        alert.setHeaderText(header);
+        alert.setContentText(error);
+        final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+        alert.showAndWait();
+    }
+}

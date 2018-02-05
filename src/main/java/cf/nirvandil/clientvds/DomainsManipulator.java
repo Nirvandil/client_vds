@@ -17,24 +17,23 @@ import java.util.List;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- *
+ * <p>
  * This interface declares methods, that must contain object for
  * manipulating domains (adding, removing them) and run command on server.
  */
-interface DomainsManipulator
-    {
-        String addDomain(String domain, String ip, String own, String phpMod, String templatePath) throws IOException, JSchException, MainException;
+interface DomainsManipulator {
+    String addDomain(String domain, String ip, String own, String phpMod, String templatePath) throws IOException, JSchException, MainException;
 
-        String removeDomain(String domain, String owner) throws IOException, JSchException, MainException;
+    String removeDomain(String domain, String owner) throws IOException, JSchException, MainException;
 
-        String askUserOfPanel(List<String> users) throws IOException, JSchException, MainException;
+    String askUserOfPanel(List<String> users) throws IOException, JSchException, MainException;
 
-        List<String> getCommandOutput(final String command) throws IOException, JSchException, MainException;
+    List<String> getCommandOutput(final String command) throws IOException, JSchException, MainException;
 
-        List<String> getUsers() throws IOException, JSchException, MainException;
+    List<String> getUsers() throws IOException, JSchException, MainException;
 
-        boolean checkPathExist(String path) throws IOException, JSchException, MainException;
+    boolean checkPathExist(String path) throws IOException, JSchException, MainException;
 
-        void reportDone();
+    void reportDone();
 
-    }
+}
