@@ -38,8 +38,7 @@ abstract class AbstractDomainsManipulator implements DomainsManipulator {
         this.session = session;
     }
 
-    @Override
-    public List<String> getCommandOutput(final String command) throws IOException, JSchException {
+    List<String> getCommandOutput(final String command) throws IOException, JSchException {
         final ChannelExec exec = getChannelExec();
         final BufferedReader inputReader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
         final BufferedReader errorReader = new BufferedReader(new InputStreamReader(exec.getErrStream()));
@@ -85,8 +84,7 @@ abstract class AbstractDomainsManipulator implements DomainsManipulator {
             throw new MainException("Необходимо обязательно указывать пользователя!");
     }
 
-    @Override
-    public boolean checkPathExist(String path) throws IOException, JSchException {
+    boolean checkPathExist(String path) throws IOException, JSchException {
         return ((Integer.parseInt(getCommandOutput("test -e " + path + " && echo 0").get(0)) == 0));
     }
 

@@ -28,11 +28,7 @@ interface DomainsManipulator {
 
     String askUserOfPanel(List<String> users) throws IOException, JSchException, MainException;
 
-    List<String> getCommandOutput(final String command) throws IOException, JSchException, MainException;
-
     List<String> getUsers() throws IOException, JSchException, MainException;
-
-    boolean checkPathExist(String path) throws IOException, JSchException, MainException;
 
     void reportDone();
 
