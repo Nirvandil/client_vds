@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.scene.control.Alert.AlertType.WARNING;
+
 /**
  * Created by Vladimir Sukharev aka Nirvandil on 07.09.2016.
  * This program is free software: you can redistribute it and/or modify
@@ -70,7 +72,7 @@ class LogicFrame {
                     final Map<String, String> result = task.getValue();
                     if (!result.isEmpty() && !result.containsValue("")) {
                         for (final String domain : result.keySet()) {
-                            final Alert alert = new Alert(Alert.AlertType.WARNING);
+                            final Alert alert = new Alert(WARNING);
                             final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                             stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
                             alert.setTitle("Внимание");
@@ -118,6 +120,7 @@ class LogicFrame {
         panel = in.readLine();
         if (panel.equals("not_panel")) throw new MainException("Панель управления не обнаружена!",
                 "Работа утилиты возможна только с \nISPmanager 4/5 Lite и VestaCP");
+        channel.disconnect();
         return panel;
     }
 }

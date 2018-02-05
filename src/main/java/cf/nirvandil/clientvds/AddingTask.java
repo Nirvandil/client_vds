@@ -1,6 +1,7 @@
 package cf.nirvandil.clientvds;
 
 import javafx.concurrent.Task;
+import lombok.SneakyThrows;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,8 @@ class AddingTask extends Task<Map<String, String>> {
     }
 
     @Override
-    protected Map<String, String> call() throws Exception {
+    @SneakyThrows
+    protected Map<String, String> call() {
         final int fullWork = domains.size();
         int done = 0;
         domainsManipulator.getUsers();
@@ -50,11 +52,7 @@ class AddingTask extends Task<Map<String, String>> {
             final String returnCode = domainsManipulator.addDomain(domain, ip, owner, phpMod, templatePath);
             done += 1;
             updateProgress(done, fullWork);
-            try {
-                Thread.sleep(100);
-            } catch (final InterruptedException ie) {
-                ie.printStackTrace();
-            }
+            Thread.sleep(100);
             if (!returnCode.equals("")) {
                 String message = "";
                 switch (returnCode) {

@@ -1,12 +1,10 @@
 package cf.nirvandil.clientvds;
 
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import lombok.SneakyThrows;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 /**
@@ -31,36 +29,35 @@ class VestaDomainsManipulator extends AbstractDomainsManipulator {
     }
 
     @Override
-    public String addDomain(final String domain, final String ip, final String own, final String phpMod, String templatePath)
-            throws IOException, JSchException {
-        final ChannelExec channel = super.getChannelExec();
-        final BufferedReader in = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-        String commString = "/usr/local/vesta/bin/v-add-web-domain " + own + " " + domain + " " + ip;
-        commString += " ; /usr/local/vesta/bin/v-add-dns-domain " + own + " " + domain + " " + ip;
+    @SneakyThrows
+    public String addDomain(final String domain, final String ip, final String owner, final String phpMod, String templatePath) {
+        String commString = "VESTA=/usr/local/vesta /usr/local/vesta/bin/v-add-web-domain " +
+                owner + " " + domain + " " + ip;
+        commString += " ;VESTA=/usr/local/vesta /usr/local/vesta/bin/v-add-dns-domain " +
+                owner + " " + domain + " " + ip;
         //If not CGI -> as module
         if (!phpMod.contains("CGI")) {
-            commString += " ; /usr/local/vesta/bin/v-change-web-domain-tpl " + own + " " + domain + " default " + "YES";
+            commString += " ; VESTA=/usr/local/vesta /usr/local/vesta/bin/v-change-web-domain-tpl " +
+                    owner + " " + domain + " default " + "YES";
         }
         if (templatePath.length() > 1 && checkPathExist(templatePath)) {
-            String destPath = constructDomainPath(own, domain);
+            String destPath = constructDomainPath(owner, domain);
             String templateCopyCommand = " && shopt -s dotglob && " + "\\cp -r " + templatePath + "* "
-                    + destPath + " && chown -R " + own + ":" + own + " " + destPath;
+                    + destPath + " && chown -R " + owner + ":" + owner + " " + destPath;
             commString += templateCopyCommand;
         }
-        channel.setCommand(commString);
-        channel.connect();
-        final String answer = in.readLine();
-        if (answer != null && answer.contains("exist")) {
-            channel.disconnect();
-            return "exist";
-        } else {
-            channel.disconnect();
-            return "";
+        List<String> commandOutput = getCommandOutput(commString);
+        for (String answer : commandOutput) {
+            if (answer != null && answer.contains("exist")) {
+                return "exist";
+            }
         }
+        return "";
     }
 
     @Override
-    public List<String> getUsers() throws IOException, JSchException {
+    @SneakyThrows
+    public List<String> getUsers() {
         return getCommandOutput("/bin/ls /usr/local/vesta/data/users/");
     }
 

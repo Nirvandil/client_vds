@@ -18,8 +18,7 @@ import com.jcraft.jsch.Session;
  * Factory for creating manipulator based on panel
  */
 
-//Singleton, because we need only one factory for adders
-class ManipulatorFactory {
+abstract class ManipulatorFactory {
 
     public static DomainsManipulator createManipulator(final String panel, final Session session) {
         switch (panel) {

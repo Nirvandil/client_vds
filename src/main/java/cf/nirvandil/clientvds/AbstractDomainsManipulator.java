@@ -41,13 +41,17 @@ abstract class AbstractDomainsManipulator implements DomainsManipulator {
     @Override
     public List<String> getCommandOutput(final String command) throws IOException, JSchException {
         final ChannelExec exec = getChannelExec();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+        final BufferedReader inputReader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+        final BufferedReader errorReader = new BufferedReader(new InputStreamReader(exec.getErrStream()));
         exec.setCommand(command);
         exec.connect();
         final List<String> out = new ArrayList<>();
         String line;
-        while ((line = reader.readLine()) != null)
+        while ((line = inputReader.readLine()) != null)
             out.add(line);
+        while ((line = errorReader.readLine()) != null)
+            out.add(line);
+        exec.disconnect();
         return out;
     }
 
