@@ -47,6 +47,7 @@ public class VestaDomainsManipulator extends AbstractDomainsManipulator {
             String destPath = constructDomainPath(owner, domain);
             String templateCopyCommand = " && shopt -s dotglob && " + "\\cp -r " + templatePath + "* "
                     + destPath + " && chown -R " + owner + ":" + owner + " " + destPath;
+            commString += "; rm -f /home/" + owner + "/web/" + domain + "/public_html/*";
             commString += templateCopyCommand;
         }
         log.debug(commString);
@@ -68,7 +69,7 @@ public class VestaDomainsManipulator extends AbstractDomainsManipulator {
 
     @Override
     public String removeDomain(final String domain, final String owner) throws IOException, JSchException {
-        return getCommandOutput("/usr/local/vesta/bin/v-delete-web-domain " + owner + " " + domain).get(0);
+        return getCommandOutput("VESTA=/usr/local/vesta /usr/local/vesta/bin/v-delete-domain " + owner + " " + domain).get(0);
     }
 
     @Override
