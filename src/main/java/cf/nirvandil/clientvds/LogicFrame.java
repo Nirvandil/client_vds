@@ -55,37 +55,40 @@ public class LogicFrame {
         this.progressBar = progressBar;
     }
 
-    public void MainAction(final String domainsContent, final String phpMod, final String action, final String templatePath)
+    public void MainAction(final String domainsContent, final String phpMod, final String action, final String templatePath,
+                           final String token)
             throws IOException, JSchException, MainException {
         final List<String> domains = getValidatedDomains(domainsContent);
         // Create domainsManipulator from factory by passing panel and session
         domainsManipulator = ManipulatorFactory.createManipulator(detectPanel(), getSshClientSession());
         final String owner = domainsManipulator.askUserOfPanel(domainsManipulator.getUsers());
-        final Task<Map<String, String>> task;
+        final Task<Map<String, List<String>>> task;
         switch (action) {
             case "Удалить":
-                task = new RemovingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath);
+                task = new RemovingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath, token);
                 break;
             case "Добавить":
-                task = new AddingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath);
+                task = new AddingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath, token);
                 break;
             default:
                 //If not initialized(?!), then adding
-                task = new AddingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath);
+                task = new AddingTask(domains, details.getIp(), domainsManipulator, owner, phpMod, templatePath, token);
         }
         progressBar.progressProperty().bind(task.progressProperty());
         task.setOnSucceeded(WorkerStateEvent ->
                 {
-                    final Map<String, String> result = task.getValue();
-                    if (!result.isEmpty() && !result.containsValue("")) {
+                    final Map<String, List<String>> result = task.getValue();
+                    if (!result.isEmpty()) {
                         for (final String domain : result.keySet()) {
-                            final Alert alert = new Alert(WARNING);
-                            final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                            stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                            alert.setTitle("Внимание");
-                            alert.setHeaderText("При обработке доменов возникли следующие предупреждения:");
-                            alert.setContentText(result.get(domain));
-                            alert.showAndWait();
+                            for (String message : result.get(domain)) {
+                                final Alert alert = new Alert(WARNING);
+                                final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+                                alert.setTitle("Внимание");
+                                alert.setHeaderText("При обработке доменов возникли следующие предупреждения:");
+                                alert.setContentText(message);
+                                alert.showAndWait();
+                            }
                         }
                     }
                     domainsManipulator.reportDone();

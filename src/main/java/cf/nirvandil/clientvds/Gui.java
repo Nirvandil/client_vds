@@ -48,6 +48,7 @@ public class Gui extends Application {
     private final PasswordField passField = new PasswordField();
     private final Button help = new Button();
     private final TextField pathTemplateField = new TextField();
+    private final TextField tokenField = new TextField();
     private final Tooltip pathTemplateTooltip = new Tooltip("Укажите путь к каталогу, содержащему файлы для загрузки в создаваемые каталоги сайтов. \nЕсли это не нужно, " +
             "оставьте данное поле пустым. Путь указывается от корня сервера");
     private final ToggleGroup phpToggle = new ToggleGroup();
@@ -66,10 +67,11 @@ public class Gui extends Application {
     private final Tooltip phpModTooltip = new Tooltip("Использовать режим работы РНР как модуль Apache (выбирайте, если знаете, что делаете)");
     private final Tooltip removeTooltip = new Tooltip(
             "Удалит указанный список доменов с сервера. Если таких доменов не существует, ничего не случится");
+    private final Tooltip tokenToolTip = new Tooltip("Oauth token от Digital Ocean.");
     private final String friendURI = "https://friendhosting.net";
     //In handler we pass links to our GUI elements, because later we must use their content
     private final PressButtonHandler pressButtonHandler = new PressButtonHandler(ipField, passField, portField, progressBar, domainsArea,
-            phpToggle, pathTemplateField);
+            phpToggle, pathTemplateField, tokenField);
 
     public Gui() {
         super();
@@ -84,6 +86,7 @@ public class Gui extends Application {
         initFriendHostingLink();
         initAddButton();
         initRemoveButton();
+        initTokenField();
         initGridLayout();
     }
 
@@ -100,6 +103,11 @@ public class Gui extends Application {
         portField.setTooltip(portFieldTooltip);
         portField.setMaxWidth(60);
         portField.setPromptText("3333");
+    }
+
+    private void initTokenField() {
+        tokenField.setTooltip(tokenToolTip);
+        tokenField.setPromptText("Oauth token");
     }
 
     private void initHelp() {
@@ -183,11 +191,12 @@ public class Gui extends Application {
         root.add(progressBar, 1, 2);
         root.add(new Text("Путь к каталогу с шаблоном"), 0, 3);
         root.add(pathTemplateField, 1, 3, 2, 1);
-        root.add(domainsArea, 0, 4, 3, 1);
+        root.add(tokenField, 1, 4, 2, 1);
+        root.add(domainsArea, 0, 5, 3, 1);
         root.add(help, 3, 0);
-        root.add(hyperlink, 0, 5, 2, 1);
-        root.add(removeButton, 2, 5);
-        root.add(addButton, 3, 5);
+        root.add(hyperlink, 0, 6, 2, 1);
+        root.add(removeButton, 2, 6);
+        root.add(addButton, 3, 6);
     }
 
     @Override
@@ -195,10 +204,10 @@ public class Gui extends Application {
         final Scene scene = new Scene(root);
         // Set "resizable" by binding width of window to domainsArea
         scene.widthProperty().addListener((observable, oldValue, newValue) ->
-                domainsArea.setMinWidth(newValue.doubleValue() - 180)
+                domainsArea.setMinWidth(newValue.doubleValue() - 220)
         );
         scene.heightProperty().addListener((observable, oldValue, newValue) ->
-                domainsArea.setMinHeight(newValue.doubleValue() - 180)
+                domainsArea.setMinHeight(newValue.doubleValue() - 220)
         );
         scene.getStylesheets().add("/style.css");
         primaryStage.setTitle("Автоматическое добавление доменов на серверы с ISPmanager и VESTA");

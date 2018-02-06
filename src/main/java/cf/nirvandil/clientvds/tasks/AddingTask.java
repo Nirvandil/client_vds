@@ -1,9 +1,12 @@
 package cf.nirvandil.clientvds.tasks;
 
+import cf.nirvandil.clientvds.service.DigitalOceanClient;
 import cf.nirvandil.clientvds.service.DomainsManipulator;
+import cf.nirvandil.clientvds.service.impl.DigitalOceanClientImpl;
 import javafx.concurrent.Task;
 import lombok.SneakyThrows;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,38 +26,45 @@ import java.util.Map;
  * <p>
  * This is task for adding domains to server.
  */
-public class AddingTask extends Task<Map<String, String>> {
+public class AddingTask extends Task<Map<String, List<String>>> {
     final List<String> domains;
     final DomainsManipulator domainsManipulator;
     final String owner;
     private final String ip;
     private final String templatePath;
+    private final String token;
     private final String phpMod;
+    private final DigitalOceanClient digitalOceanClient = new DigitalOceanClientImpl();
 
     public AddingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator,
-                      final String owner, final String phpMod, final String templatePath) {
+                      final String owner, final String phpMod, final String templatePath, final String token) {
         this.domains = domains;
         this.ip = ip;
         this.domainsManipulator = domainsManipulator;
         this.owner = owner;
         this.phpMod = phpMod;
         this.templatePath = templatePath;
+        this.token = token;
     }
 
     @Override
     @SneakyThrows
-    protected Map<String, String> call() {
+    protected Map<String, List<String>> call() {
         final int fullWork = domains.size();
         int done = 0;
         domainsManipulator.getUsers();
         //Into map we will put any errors that occurs while adding domain
-        final Map<String, String> result = new HashMap<>();
+        final Map<String, List<String>> result = new HashMap<>();
         for (final String domain : domains) {
-            final String returnCode = domainsManipulator.addDomain(domain, ip, owner, phpMod, templatePath);
+            String returnCode = domainsManipulator.addDomain(domain, ip, owner, phpMod, templatePath);
+            String digitalOceanAnswer = "";
+            if (!token.isEmpty()) {
+                digitalOceanAnswer = digitalOceanClient.addDomain(domain, ip, token);
+            }
             done += 1;
             updateProgress(done, fullWork);
             Thread.sleep(100);
-            if (!returnCode.equals("")) {
+            if (!returnCode.isEmpty()) {
                 String message = "";
                 switch (returnCode) {
                     case "ERROR 2":
@@ -79,7 +89,23 @@ public class AddingTask extends Task<Map<String, String>> {
                                 "вручную, после чего удалить файл, на который укажет ISPmanager 4.";
                         break;
                 }
-                result.put(domain, message);
+                if (!digitalOceanAnswer.isEmpty()) {
+                    if (result.containsKey(domain)) {
+                        result.get(domain).add("Ошибка добавления на Digital Ocean (возможно, токен устарел или домен уже существует)!");
+                    } else {
+                        List<String> messages = new ArrayList<>();
+                        messages.add("Ошибка добавления на Digital Ocean (возможно, токен устарел или домен уже существует)!");
+                        result.put(domain, messages);
+                    }
+
+                }
+                if (result.containsKey(domain)) {
+                    result.get(domain).add(message);
+                } else {
+                    List<String> messages = new ArrayList<>();
+                    messages.add(message);
+                    result.put(domain, messages);
+                }
             }
         }
         return result;

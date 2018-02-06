@@ -34,7 +34,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class PressButtonHandler implements EventHandler<ActionEvent> {
-    private static final String MESSAGE_EMPTY_FIELDS = "Все поля должны быть заполнены!";
+    private static final String MESSAGE_EMPTY_FIELDS = "Все поля, кроме токена, должны быть заполнены!";
     private final TextField ipField;
     private final PasswordField passField;
     private final TextField portField;
@@ -42,9 +42,11 @@ public class PressButtonHandler implements EventHandler<ActionEvent> {
     private final ProgressBar progressBar;
     private final TextArea domainsAreaContent;
     private final ToggleGroup phpMode;
+    private final TextField tokenField;
 
     PressButtonHandler(final TextField ipField, final PasswordField passField, final TextField portField, final ProgressBar progressBar,
-                       final TextArea domainsAreaContent, final ToggleGroup phpMode, final TextField templateField) {
+                       final TextArea domainsAreaContent, final ToggleGroup phpMode, final TextField templateField,
+                       final TextField tokenField) {
         this.ipField = ipField;
         this.passField = passField;
         this.portField = portField;
@@ -52,6 +54,7 @@ public class PressButtonHandler implements EventHandler<ActionEvent> {
         this.progressBar = progressBar;
         this.domainsAreaContent = domainsAreaContent;
         this.phpMode = phpMode;
+        this.tokenField = tokenField;
     }
 
     @Override
@@ -66,7 +69,7 @@ public class PressButtonHandler implements EventHandler<ActionEvent> {
                     templatePath += "/";
                 logicFrame
                         .MainAction(domainsAreaContent.getText(),
-                                ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath);
+                                ((RadioButton) phpMode.getSelectedToggle()).getText(), action, templatePath, tokenField.getText());
             } catch (final IOException ioe) {
                 throw new MainException("Произошла ошибка ввода-вывода, проверьте наличие подключения!");
             } catch (final JSchException jshe) {

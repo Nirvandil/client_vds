@@ -3,6 +3,7 @@ package cf.nirvandil.clientvds.tasks;
 import cf.nirvandil.clientvds.service.DomainsManipulator;
 import lombok.SneakyThrows;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,18 +25,18 @@ import java.util.Map;
  */
 public class RemovingTask extends AddingTask {
     public RemovingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator, final String owner,
-                        final String phpMod, final String templatePath) {
-        super(domains, ip, domainsManipulator, owner, phpMod, templatePath);
+                        final String phpMod, final String templatePath, final String token) {
+        super(domains, ip, domainsManipulator, owner, phpMod, templatePath, token);
     }
 
     @Override
     @SneakyThrows
-    protected Map<String, String> call() {
+    protected Map<String, List<String>> call() {
         final int fullWork = domains.size();
         int done = 0;
         domainsManipulator.getUsers();
         //Into map we will put any errors that occurs while adding domain
-        final Map<String, String> result = new HashMap<>();
+        final Map<String, List<String>> result = new HashMap<>();
         for (final String domain : domains) {
             final String returnCode = domainsManipulator.removeDomain(domain, owner);
             done += 1;
@@ -49,7 +50,7 @@ public class RemovingTask extends AddingTask {
                     else
                         message = "Похоже, что пользователь " + owner + " не существует в \nпанели управления";
                 }
-                result.put(domain, message);
+                result.put(domain, Collections.singletonList(message));
             }
         }
         return result;
