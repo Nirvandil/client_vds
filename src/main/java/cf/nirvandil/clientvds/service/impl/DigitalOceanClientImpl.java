@@ -25,6 +25,7 @@ public class DigitalOceanClientImpl implements DigitalOceanClient {
         HttpPost post = new HttpPost(ADDRESS);
         String json = "{\"name\":\"" + domain + "\", \"ip_address\":\"" + ip + "\"}";
         StringEntity stringEntity = new StringEntity(json);
+        post.setEntity(stringEntity);
         post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         CloseableHttpResponse httpResponse = client.execute(post);
