@@ -1,6 +1,8 @@
 package cf.nirvandil.clientvds.tasks;
 
+import cf.nirvandil.clientvds.service.DigitalOceanClient;
 import cf.nirvandil.clientvds.service.DomainsManipulator;
+import cf.nirvandil.clientvds.service.impl.DigitalOceanClientImpl;
 import lombok.SneakyThrows;
 
 import java.util.Collections;
@@ -24,6 +26,8 @@ import java.util.Map;
  * Task for removing domains
  */
 public class RemovingTask extends AddingTask {
+    private final DigitalOceanClient digitalOceanClient = new DigitalOceanClientImpl();
+
     public RemovingTask(final List<String> domains, final String ip, final DomainsManipulator domainsManipulator, final String owner,
                         final String phpMod, final String templatePath, final String token) {
         super(domains, ip, domainsManipulator, owner, phpMod, templatePath, token);
@@ -39,18 +43,26 @@ public class RemovingTask extends AddingTask {
         final Map<String, List<String>> result = new HashMap<>();
         for (final String domain : domains) {
             final String returnCode = domainsManipulator.removeDomain(domain, owner);
+            String digitalAnswer = "";
+            if (!token.isEmpty()) {
+                digitalAnswer = digitalOceanClient.removeDomain(domain, token);
+            }
             done += 1;
             updateProgress(done, fullWork);
             Thread.sleep(100);
-            if (!returnCode.equals("")) {
+            if (!returnCode.isEmpty()) {
                 String message = "";
                 if (returnCode.contains("doesn't exist")) {
-                    if (returnCode.contains("DOMAIN"))
+                    if (returnCode.contains("domain"))
                         message = "Похоже, что домен " + domain + " не существует в \nпанели управления";
-                    else
+                    else if (returnCode.contains("user"))
                         message = "Похоже, что пользователь " + owner + " не существует в \nпанели управления";
                 }
                 result.put(domain, Collections.singletonList(message));
+            }
+            if (!digitalAnswer.isEmpty()) {
+                result.put(domain, Collections.singletonList("Невозможно удалить с Digital Ocean, возможно, " +
+                        "домена не существует."));
             }
         }
         return result;

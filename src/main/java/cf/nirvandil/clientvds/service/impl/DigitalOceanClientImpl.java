@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -38,6 +39,26 @@ public class DigitalOceanClientImpl implements DigitalOceanClient {
             return "";
         } else {
             log.error("Domain {} can't be created on Digital Ocean.", domain);
+            return ("DO");
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public String removeDomain(String domain, String token) {
+        TimeUnit.MILLISECONDS.sleep(50);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpDelete delete = new HttpDelete(ADDRESS + "/" + domain);
+        delete.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+        delete.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+        CloseableHttpResponse httpResponse = client.execute(delete);
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        client.close();
+        if (statusCode == HttpStatus.SC_NO_CONTENT) {
+            log.info("Domain {} removed from Digital Ocean.", domain);
+            return "";
+        } else {
+            log.error("Domain {} can't be removed from Digital Ocean.", domain);
             return ("DO");
         }
     }

@@ -69,7 +69,17 @@ public class VestaDomainsManipulator extends AbstractDomainsManipulator {
 
     @Override
     public String removeDomain(final String domain, final String owner) throws IOException, JSchException {
-        return getCommandOutput("VESTA=/usr/local/vesta /usr/local/vesta/bin/v-delete-domain " + owner + " " + domain).get(0);
+        log.info("Removing domain {} from VESTA", domain);
+        String command = "VESTA=/usr/local/vesta " +
+                "/usr/local/vesta/bin/v-delete-web-domain " + owner + " " + domain + "; VESTA=/usr/local/vesta " +
+                "/usr/local/vesta/bin/v-delete-dns-domain " + owner + " " + domain;
+        log.debug(command);
+
+        List<String> output = getCommandOutput(command);
+        if (output.isEmpty()) {
+            return "";
+        }
+        return output.get(0);
     }
 
     @Override

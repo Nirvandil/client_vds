@@ -32,7 +32,7 @@ public class AddingTask extends Task<Map<String, List<String>>> {
     final String owner;
     private final String ip;
     private final String templatePath;
-    private final String token;
+    final String token;
     private final String phpMod;
     private final DigitalOceanClient digitalOceanClient = new DigitalOceanClientImpl();
 

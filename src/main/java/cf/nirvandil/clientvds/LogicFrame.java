@@ -46,6 +46,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
  * status operation in the and.
  */
 public class LogicFrame {
+    private static final int MAX_DOMAINS = 200;
     private final ConnectionDetails details;
     private final ProgressBar progressBar;
     private DomainsManipulator domainsManipulator;
@@ -100,7 +101,8 @@ public class LogicFrame {
     private List<String> getValidatedDomains(final String doms) throws MainException {
         final List<String> domains = new ArrayList<>(asList(doms.split("\n")));
         domains.replaceAll(String::trim);
-        if (domains.size() > 500) throw new MainException("За один раз можно добавить не более 500 доменов!");
+        if (domains.size() > MAX_DOMAINS)
+            throw new MainException("За один раз можно добавить не более" + MAX_DOMAINS + " доменов!");
         final DomainValidator validator = DomainValidator.getInstance();
         for (final String domain : domains) {
             if (!validator.isValid(domain))
