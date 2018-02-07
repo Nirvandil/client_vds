@@ -91,10 +91,10 @@ public class AddingTask extends Task<Map<String, List<String>>> {
                 }
                 if (!digitalOceanAnswer.isEmpty()) {
                     if (result.containsKey(domain)) {
-                        result.get(domain).add("Ошибка добавления на Digital Ocean (возможно, токен устарел или домен уже существует)!");
+                        result.get(domain).add("Ошибка добавления " + domain + " на Digital Ocean (возможно, токен устарел или домен уже существует)!");
                     } else {
                         List<String> messages = new ArrayList<>();
-                        messages.add("Ошибка добавления на Digital Ocean (возможно, токен устарел или домен уже существует)!");
+                        messages.add("Ошибка добавления " + domain + " на Digital Ocean (возможно, токен устарел или домен уже существует)!");
                         result.put(domain, messages);
                     }
 

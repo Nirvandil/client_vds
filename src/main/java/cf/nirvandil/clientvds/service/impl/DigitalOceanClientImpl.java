@@ -13,15 +13,17 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class DigitalOceanClientImpl implements DigitalOceanClient {
     private static final String ADDRESS = "https://api.digitalocean.com/v2/domains";
-    private CloseableHttpClient client = HttpClients.createDefault();
 
     @Override
-    @SneakyThrows({UnsupportedEncodingException.class, IOException.class})
+    @SneakyThrows({UnsupportedEncodingException.class, IOException.class, InterruptedException.class})
     public String addDomain(String domain, String ip, String token) {
+        TimeUnit.MILLISECONDS.sleep(50);
+        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(ADDRESS);
         String json = "{\"name\":\"" + domain + "\", \"ip_address\":\"" + ip + "\"}";
         StringEntity stringEntity = new StringEntity(json);
@@ -30,6 +32,7 @@ public class DigitalOceanClientImpl implements DigitalOceanClient {
         post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         CloseableHttpResponse httpResponse = client.execute(post);
         int statusCode = httpResponse.getStatusLine().getStatusCode();
+        client.close();
         if (statusCode == HttpStatus.SC_CREATED) {
             log.info("Domain {} created on Digital Ocean with IP address {}", domain, ip);
             return "";
