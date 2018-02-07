@@ -82,13 +82,15 @@ public class LogicFrame {
                     if (!result.isEmpty()) {
                         for (final String domain : result.keySet()) {
                             for (String message : result.get(domain)) {
-                                final Alert alert = new Alert(WARNING);
-                                final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
-                                alert.setTitle("Внимание");
-                                alert.setHeaderText("При обработке доменов возникли следующие предупреждения:");
-                                alert.setContentText(message);
-                                alert.showAndWait();
+                                if (!message.isEmpty()) {
+                                    final Alert alert = new Alert(WARNING);
+                                    final Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                                    stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
+                                    alert.setTitle("Внимание");
+                                    alert.setHeaderText("При обработке доменов возникли следующие предупреждения:");
+                                    alert.setContentText(message);
+                                    alert.showAndWait();
+                                }
                             }
                         }
                     }

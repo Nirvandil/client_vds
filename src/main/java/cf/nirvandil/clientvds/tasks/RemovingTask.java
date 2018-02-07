@@ -63,14 +63,10 @@ public class RemovingTask extends AddingTask {
                 result.put(domain, errors);
             }
             if (!digitalAnswer.isEmpty()) {
+                String oceanMessage = "Невозможно удалить " + domain + " с Digital Ocean, возможно,\n " +
+                        "домена не существует или некорректный ключ API.";
                 if (result.containsKey(domain)) {
-                    result.get(domain).add("Невозможно удалить " + domain + " с Digital Ocean, возможно, " +
-                            "домена не существует.");
-                } else {
-                    List<String> errors = new ArrayList<>();
-                    errors.add("Невозможно удалить " + domain + " с Digital Ocean, возможно, " +
-                            "домена не существует.");
-                    result.put(domain, errors);
+                    super.putCarefully(result, oceanMessage, domain);
                 }
             }
         }

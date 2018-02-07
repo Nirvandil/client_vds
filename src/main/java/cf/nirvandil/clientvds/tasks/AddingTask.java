@@ -90,24 +90,27 @@ public class AddingTask extends Task<Map<String, List<String>>> {
                         break;
                 }
                 if (!digitalOceanAnswer.isEmpty()) {
+                    String oceanMessage = "Ошибка добавления " + domain + " на Digital Ocean (возможно, токен устарел или домен уже существует)!";
                     if (result.containsKey(domain)) {
-                        result.get(domain).add("Ошибка добавления " + domain + " на Digital Ocean (возможно, токен устарел или домен уже существует)!");
-                    } else {
-                        List<String> messages = new ArrayList<>();
-                        messages.add("Ошибка добавления " + domain + " на Digital Ocean (возможно, токен устарел или домен уже существует)!");
-                        result.put(domain, messages);
+                        putCarefully(result, oceanMessage, domain);
                     }
 
                 }
                 if (result.containsKey(domain)) {
-                    result.get(domain).add(message);
-                } else {
-                    List<String> messages = new ArrayList<>();
-                    messages.add(message);
-                    result.put(domain, messages);
+                    putCarefully(result, message, domain);
                 }
             }
         }
         return result;
+    }
+
+    void putCarefully(Map<String, List<String>> target, String message, String domain) {
+        if (target.containsKey(domain)) {
+            target.get(domain).add(message);
+        } else {
+            List<String> messages = new ArrayList<>();
+            messages.add(message);
+            target.put(domain, messages);
+        }
     }
 }

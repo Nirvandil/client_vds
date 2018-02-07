@@ -77,7 +77,7 @@ abstract class AbstractDomainsManipulator implements DomainsManipulator {
     public String askUserOfPanel(final List<String> users) throws MainException {
         final ChoiceDialog<String> dialog = new ChoiceDialog<>(users.get(0), users);
         dialog.setTitle("Владелец");
-        dialog.setHeaderText("Укажите, какому пользователю в\nпанели управления будут добавлены домены");
+        dialog.setHeaderText("Укажите, с каким пользователем \nпанели управления будет идти работа");
         dialog.setContentText("Имя пользователя: ");
         final Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/friendlogo.png")));
