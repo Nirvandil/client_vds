@@ -58,7 +58,7 @@ public class DigitalOceanClientImpl implements DigitalOceanClient {
             log.info("Domain {} removed from Digital Ocean.", domain);
             return "";
         } else {
-            log.error("Domain {} can't be removed from Digital Ocean.", domain);
+            log.error("Domain {} can't be removed from Digital Ocean, answer was {}", domain, statusCode);
             return ("DO");
         }
     }

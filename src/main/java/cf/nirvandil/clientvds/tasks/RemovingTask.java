@@ -5,7 +5,7 @@ import cf.nirvandil.clientvds.service.DomainsManipulator;
 import cf.nirvandil.clientvds.service.impl.DigitalOceanClientImpl;
 import lombok.SneakyThrows;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +51,7 @@ public class RemovingTask extends AddingTask {
             updateProgress(done, fullWork);
             Thread.sleep(100);
             if (!returnCode.isEmpty()) {
+                List<String> errors = new ArrayList<>();
                 String message = "";
                 if (returnCode.contains("doesn't exist")) {
                     if (returnCode.contains("domain"))
@@ -58,11 +59,19 @@ public class RemovingTask extends AddingTask {
                     else if (returnCode.contains("user"))
                         message = "Похоже, что пользователь " + owner + " не существует в \nпанели управления";
                 }
-                result.put(domain, Collections.singletonList(message));
+                errors.add(message);
+                result.put(domain, errors);
             }
             if (!digitalAnswer.isEmpty()) {
-                result.put(domain, Collections.singletonList("Невозможно удалить с Digital Ocean, возможно, " +
-                        "домена не существует."));
+                if (result.containsKey(domain)) {
+                    result.get(domain).add("Невозможно удалить " + domain + " с Digital Ocean, возможно, " +
+                            "домена не существует.");
+                } else {
+                    List<String> errors = new ArrayList<>();
+                    errors.add("Невозможно удалить " + domain + " с Digital Ocean, возможно, " +
+                            "домена не существует.");
+                    result.put(domain, errors);
+                }
             }
         }
         return result;
