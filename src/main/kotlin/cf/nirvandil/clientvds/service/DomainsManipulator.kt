@@ -1,10 +1,9 @@
-package cf.nirvandil.clientvds.service;
+package cf.nirvandil.clientvds.service
 
-import cf.nirvandil.clientvds.exc.MainException;
-import com.jcraft.jsch.JSchException;
+import cf.nirvandil.clientvds.exc.MainException
+import com.jcraft.jsch.JSchException
 
-import java.io.IOException;
-import java.util.List;
+import java.io.IOException
 
 /**
  * Created by Vladimir Sukharev aka Nirvandil on 07.09.2016.
@@ -18,19 +17,26 @@ import java.util.List;
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
- * <p>
+ *
+ *
  * This interface declares methods, that must contain object for
  * manipulating domains (adding, removing them) and run command on server.
  */
-public interface DomainsManipulator {
-    String addDomain(String domain, String ip, String own, String phpMod, String templatePath) throws IOException, JSchException, MainException;
+interface DomainsManipulator {
 
-    String removeDomain(String domain, String owner) throws IOException, JSchException, MainException;
+    val users: List<String>
+        @Throws(IOException::class, JSchException::class, MainException::class)
+        get
 
-    String askUserOfPanel(List<String> users) throws IOException, JSchException, MainException;
+    @Throws(IOException::class, JSchException::class, MainException::class)
+    fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String
 
-    List<String> getUsers() throws IOException, JSchException, MainException;
+    @Throws(IOException::class, JSchException::class, MainException::class)
+    fun removeDomain(domain: String, owner: String): String
 
-    void reportDone();
+    @Throws(IOException::class, JSchException::class, MainException::class)
+    fun askUserOfPanel(users: List<String>): String
+
+    fun reportDone()
 
 }
