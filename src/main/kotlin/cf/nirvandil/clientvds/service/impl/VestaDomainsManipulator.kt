@@ -32,9 +32,10 @@ class VestaDomainsManipulator(session: Session) : AbstractDomainsManipulator(ses
     @SneakyThrows
     override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
         log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
-        val vestaVar = "VESTA=/usr/local/vesta"
-        var commStr = "$vestaVar /usr/local/vesta/bin/v-add-web-domain $own $domain $ip ; " +
-                "$vestaVar /usr/local/vesta/bin/v-add-dns-domain $own $domain $ip"
+        val vestaPath = "/usr/local/vesta"
+        val vestaVar = "VESTA=$vestaPath"
+        var commStr = "$vestaVar $vestaPath/bin/v-add-web-domain $own $domain $ip ; " +
+                "$vestaVar $vestaPath/bin/v-add-dns-domain $own $domain $ip"
         if (!phpMod.contains("CGI"))
             commStr += " ; $vestaVar /usr/local/vesta/bin/v-change-web-domain-tpl $own $domain default YES"
         if (templatePath.length > 1 && checkPathExist(templatePath)) {
