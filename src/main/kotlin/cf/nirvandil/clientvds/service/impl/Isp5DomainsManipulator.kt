@@ -1,9 +1,11 @@
 package cf.nirvandil.clientvds.service.impl
 
 import cf.nirvandil.clientvds.exc.MainException
+import cf.nirvandil.clientvds.util.ISP5_GET_USERS_COMMAND
+import cf.nirvandil.clientvds.util.NOT_SUPPORTED
+import cf.nirvandil.clientvds.util.NO_USERS_MESSAGE
 import com.jcraft.jsch.JSchException
 import com.jcraft.jsch.Session
-import org.slf4j.LoggerFactory
 
 import java.io.IOException
 
@@ -27,9 +29,9 @@ class Isp5DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
     override val users: List<String>
         @Throws(IOException::class, JSchException::class, MainException::class)
         get() {
-            val users = getCommandOutput("/usr/local/mgr5/sbin/mgrctl -m ispmgr user | cut -f 2 -d '=' | cut -f1 -d ' '")
+            val users = getCommandOutput(ISP5_GET_USERS_COMMAND)
             return if (users.isEmpty())
-                throw MainException("Похоже, Вы не добавили ни одного пользователя в панель управления!")
+                throw MainException(NO_USERS_MESSAGE)
             else
                 users
         }
@@ -38,14 +40,14 @@ class Isp5DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
     override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
         log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
         val php = if (phpMod.contains("cgi")) "php_mode_cgi" else "php_mode_mod"
-        var commString = "/usr/local/mgr5/sbin/mgrctl -m ispmgr webdomain.edit name=$domain alias=www.$domain " +
-                "docroot=auto owner=$own email=admin@$domain ip=$ip php=on php_mode=$php sok=ok"
-        if (templatePath.length > 1 && checkPathExist(templatePath)) {
-            commString = addCpTemplateCommand(commString, own, domain, templatePath)
+        val commString = buildString {
+            append("/usr/local/mgr5/sbin/mgrctl -m ispmgr webdomain.edit name=$domain alias=www.$domain " +
+                    "docroot=auto owner=$own email=admin@$domain ip=$ip php=on php_mode=$php sok=ok")
+            if (templatePath.isNotBlank() && checkPathExist(templatePath))
+                append(createCpTemplateCommand(own, domain, templatePath))
         }
         log.debug(commString)
-        val commandOutput = getCommandOutput(commString)
-        commandOutput.forEach { answer ->
+        getCommandOutput(commString).forEach { answer ->
             with(answer) {
                 log.debug(this)
                 return when {
@@ -59,7 +61,7 @@ class Isp5DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
     }
 
     override fun removeDomain(domain: String, owner: String): String {
-        throw MainException("Operation not supported!")
+        throw MainException(NOT_SUPPORTED)
     }
 
     override fun constructDomainPath(owner: String, domainName: String) = "/var/www/$owner/data/www/$domainName/"

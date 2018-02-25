@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="AutoImportedSourceRoots">
-    <option name="directories">
-      <list>
-        <option value="C:\Users\nirva\IdeaProjects\client_vds/src/main/kotlin" />
-        <option value="C:\Users\nirva\IdeaProjects\client_vds/src/test/java" />
-        <option value="C:\Users\nirva\IdeaProjects\client_vds/src/test/kotlin" />
-      </list>
-    </option>
-  </component>
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JVM 1.6" useProjectSettings="false">
+      <configuration version="3" platform="JVM 1.8" useProjectSettings="false">
         <compilerSettings />
         <compilerArguments>
+          <option name="jvmTarget" value="1.8" />
           <option name="languageVersion" value="1.2" />
           <option name="apiVersion" value="1.2" />
           <option name="pluginOptions">

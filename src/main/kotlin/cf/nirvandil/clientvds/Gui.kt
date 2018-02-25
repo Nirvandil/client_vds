@@ -4,38 +4,7 @@ import cf.nirvandil.clientvds.exc.MainException
 import cf.nirvandil.clientvds.model.Action
 import cf.nirvandil.clientvds.model.ActionType
 import cf.nirvandil.clientvds.model.ConnectDetails
-import cf.nirvandil.clientvds.util.ADD
-import cf.nirvandil.clientvds.util.CONNECT_ERR_MESSAGE
-import cf.nirvandil.clientvds.util.DOMAINS_LIST_TOOLTIP
-import cf.nirvandil.clientvds.util.DO_TOKEN_TOOLTIP
-import cf.nirvandil.clientvds.util.DesktopApi
-import cf.nirvandil.clientvds.util.FH_LINK_NAME
-import cf.nirvandil.clientvds.util.FRIEND_URI
-import cf.nirvandil.clientvds.util.HELP_IMAGE_PATH
-import cf.nirvandil.clientvds.util.HELP_TOOLTIP
-import cf.nirvandil.clientvds.util.IO_ERR_MESSAGE
-import cf.nirvandil.clientvds.util.IP_PORT_HING
-import cf.nirvandil.clientvds.util.IP_TOOLTIP
-import cf.nirvandil.clientvds.util.LOCALHOST
-import cf.nirvandil.clientvds.util.LOGO_PATH
-import cf.nirvandil.clientvds.util.MAIN_WINDOW_NAME
-import cf.nirvandil.clientvds.util.MESSAGE_EMPTY_FIELDS
-import cf.nirvandil.clientvds.util.PASS_HINT
-import cf.nirvandil.clientvds.util.PASS_TOOLTIP
-import cf.nirvandil.clientvds.util.PATH_TEMPLATE_PROMPT
-import cf.nirvandil.clientvds.util.PATH_TEMPLATE_TOOLTIP
-import cf.nirvandil.clientvds.util.PHP_CGI
-import cf.nirvandil.clientvds.util.PHP_CGI_TOOLTIP
-import cf.nirvandil.clientvds.util.PHP_MODE
-import cf.nirvandil.clientvds.util.PHP_MODE_TOOLTIP
-import cf.nirvandil.clientvds.util.PORT_ERR_MESSAGE
-import cf.nirvandil.clientvds.util.PORT_TOOLTIP
-import cf.nirvandil.clientvds.util.PROGRESS_HINT
-import cf.nirvandil.clientvds.util.REMOVE
-import cf.nirvandil.clientvds.util.REMOVE_BUTTON_TOOLTIP
-import cf.nirvandil.clientvds.util.CSS_STYLE_PATH
-import cf.nirvandil.clientvds.util.TEMPLATE_HINT
-import cf.nirvandil.clientvds.util.WIKI_HELP_URI
+import cf.nirvandil.clientvds.util.*
 import com.jcraft.jsch.JSchException
 import javafx.application.Application
 import javafx.event.ActionEvent
@@ -134,7 +103,7 @@ class Gui : Application() {
 
     private fun initTokenField() {
         tokenField.tooltip = tokenToolTip
-        tokenField.promptText = "Oauth token"
+        tokenField.promptText = TOKEN_PROMPT
     }
 
     private fun initHelp() {
@@ -216,7 +185,7 @@ class Gui : Application() {
             try {
                 val coordinator = Coordinator(ConnectDetails(ipField.text, portField.text.toInt(), passField.text), progressBar)
                 var templatePath = pathTemplateField.text
-                if (!templatePath.endsWith("/")) templatePath += "/"
+                if (templatePath.isNotBlank() && !templatePath.endsWith("/")) templatePath += "/"
                 val actionType = ActionType.fromString((it.source as Button).text)!!
                 val action = Action(actionType,
                         domainsArea.text, (phpToggle.selectedToggle as RadioButton).text, templatePath, tokenField.text)

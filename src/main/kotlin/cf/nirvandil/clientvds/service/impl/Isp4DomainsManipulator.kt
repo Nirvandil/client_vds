@@ -35,14 +35,14 @@ class Isp4DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
     override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
         log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
         val php = if (phpMod.contains("CGI")) "phpcgi" else "phpmod"
-        var commString = "/usr/local/ispmgr/sbin/mgrctl -m ispmgr wwwdomain.edit domain=$domain alias=www.$domain " +
-                "docroot=auto owner=$own admin=admin@$domain autosubdomain=asdnone ip=$ip php=$php sok=ok"
-        if (templatePath.length > 1 && checkPathExist(templatePath)) {
-            commString = addCpTemplateCommand(commString, own, domain, templatePath)
+        val commString = buildString {
+            append("/usr/local/ispmgr/sbin/mgrctl -m ispmgr wwwdomain.edit domain=$domain alias=www.$domain " +
+                    "docroot=auto owner=$own admin=admin@$domain autosubdomain=asdnone ip=$ip php=$php sok=ok")
+            if (templatePath.isNotBlank() && checkPathExist(templatePath))
+                append(createCpTemplateCommand(own, domain, templatePath))
         }
-        log.debug(commString)
-        val commandOutput = super.getCommandOutput(commString)
-        commandOutput.forEach { answer ->
+        log.debug("Command to run for add domain $commString")
+        super.getCommandOutput(commString).forEach { answer ->
             with(answer) {
                 log.debug(this)
                 when {

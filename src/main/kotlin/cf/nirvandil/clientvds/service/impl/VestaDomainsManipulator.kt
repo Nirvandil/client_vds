@@ -1,5 +1,8 @@
 package cf.nirvandil.clientvds.service.impl
 
+import cf.nirvandil.clientvds.util.VESTA_GET_USERS_COMMAND
+import cf.nirvandil.clientvds.util.VESTA_PATH
+import cf.nirvandil.clientvds.util.VESTA_VAR
 import com.jcraft.jsch.JSchException
 import com.jcraft.jsch.Session
 import lombok.SneakyThrows
@@ -27,22 +30,22 @@ class VestaDomainsManipulator(session: Session) : AbstractDomainsManipulator(ses
 
     override val users: List<String>
         @SneakyThrows
-        get() = super.getCommandOutput("/bin/ls /usr/local/vesta/data/users/")
+        get() = super.getCommandOutput(VESTA_GET_USERS_COMMAND)
 
     @SneakyThrows
     override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
         log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
-        val vestaPath = "/usr/local/vesta"
-        val vestaVar = "VESTA=$vestaPath"
-        var commStr = "$vestaVar $vestaPath/bin/v-add-web-domain $own $domain $ip ; " +
-                "$vestaVar $vestaPath/bin/v-add-dns-domain $own $domain $ip"
-        if (!phpMod.contains("CGI"))
-            commStr += " ; $vestaVar /usr/local/vesta/bin/v-change-web-domain-tpl $own $domain default YES"
-        if (templatePath.length > 1 && checkPathExist(templatePath)) {
-            commStr += "; rm -f /home/$own/web/$domain/public_html/*"
-            commStr = addCpTemplateCommand(commStr, own, domain, templatePath)
+        val commStr = buildString {
+            append("$VESTA_VAR $VESTA_PATH/bin/v-add-web-domain $own $domain $ip ; " +
+                    "$VESTA_VAR $VESTA_PATH/bin/v-add-dns-domain $own $domain $ip")
+            if (!phpMod.contains("CGI"))
+                append("; $VESTA_VAR $VESTA_PATH/bin/v-change-web-domain-tpl $own $domain default YES")
+            if (templatePath.isNotBlank() && checkPathExist(templatePath)) {
+                append("; rm -f /home/$own/web/$domain/public_html/*")
+                append(createCpTemplateCommand(own, domain, templatePath))
+            }
         }
-        log.debug(commStr)
+        log.debug("Command line string to add domain $domain is: $commStr.")
         getCommandOutput(commStr).forEach { answer ->
             log.debug("Output from command: $answer")
             if (answer.contains("exist")) return "exist"
@@ -53,9 +56,9 @@ class VestaDomainsManipulator(session: Session) : AbstractDomainsManipulator(ses
     @Throws(IOException::class, JSchException::class)
     override fun removeDomain(domain: String, owner: String): String {
         log.info("Removing domain $domain from VESTA")
-        val command = "VESTA=/usr/local/vesta /usr/local/vesta/bin/v-delete-web-domain $owner $domain; " +
-                "VESTA=/usr/local/vesta /usr/local/vesta/bin/v-delete-dns-domain $owner $domain"
-        log.debug(command)
+        val command = "$VESTA_VAR $VESTA_PATH/bin/v-delete-web-domain $owner $domain; " +
+                "$VESTA_VAR $VESTA_PATH/bin/v-delete-dns-domain $owner $domain"
+        log.debug("Command for removing domain $domain is: $command")
         val output = getCommandOutput(command)
         return if (output.isEmpty()) "" else output[0]
     }

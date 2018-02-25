@@ -19,6 +19,8 @@ const val DIGITAL_OCEAN_API_DOMAINS = "https://api.digitalocean.com/v2/domains"
 const val JSON = "application/json"
 const val NO_USERS_MESSAGE = "Похоже, что Вы не добавили ни одного пользователя в панель управления!"
 const val ISP4_GET_USERS_COMMAND = "/usr/local/ispmgr/sbin/mgrctl user | cut -f 2 -d '='| cut -f 1 -d ' '"
+const val ISP5_GET_USERS_COMMAND = "/usr/local/mgr5/sbin/mgrctl -m ispmgr user | cut -f 2 -d '=' | cut -f1 -d ' '"
+const val VESTA_GET_USERS_COMMAND = "/bin/ls /usr/local/vesta/data/users/"
 const val GET_PANEL_COMMAND = "if [ -d /usr/local/vesta ]; then echo VESTA; elif [ -d /usr/local/ispmgr ]; " +
         "then echo ISP4; elif [ -d /usr/local/mgr5 ]; then echo ISP5; else echo UNKNOWN ; fi"
 const val PATH_TEMPLATE_TOOLTIP = "Укажите путь к каталогу, содержащему файлы для загрузки в создаваемые каталоги сайтов. \nЕсли это не нужно, " + "оставьте данное поле пустым. Путь указывается от корня сервера"
@@ -34,6 +36,7 @@ const val PHP_CGI_TOOLTIP = "Использовать режим работы Р
 const val PHP_MODE_TOOLTIP = "Использовать режим работы РНР как модуль Apache (выбирайте, если знаете, что делаете)"
 const val DO_TOKEN_TOOLTIP = "Oauth token от Digital Ocean."
 const val PATH_TEMPLATE_PROMPT = "/var/www/username/template/directory"
+const val TOKEN_PROMPT = "DO oAuth token"
 const val MAIN_WINDOW_NAME = "Автоматическое добавление доменов на серверы с ISPmanager и VESTA"
 const val PROGRESS_HINT = "Здесь будет отображён прогресс операции"
 const val IP_PORT_HING = "Укажите IP-адрес и порт SSH здесь"
@@ -50,3 +53,10 @@ const val CONNECT_ERR_MESSAGE = "Произошла ошибка при подк
 const val PORT_ERR_MESSAGE = "Некорректно указан порт для подключения!"
 const val MESSAGE_EMPTY_FIELDS = "Все поля, кроме токена и пути к шаблону, должны быть заполнены!"
 const val LOCALHOST = "127.0.0.1"
+const val TIMEOUT = 5000
+const val NOT_SUPPORTED = "Операция не поддерживается!"
+const val VESTA_PATH = "/usr/local/vesta"
+const val VESTA_VAR = "VESTA=$VESTA_PATH"
+const val MAX_DOMAINS = 200
+const val IP_INVALID_MESSAGE = "IP-адрес не является корректным адресом IPv4!"
+const val DOMAIN_INVALID_MESSAGE = "Как минимум одно из доменных имён некорректно!"

@@ -65,10 +65,9 @@ abstract class AbstractDomainsManipulator(private val session: Session) : Domain
         }
     }
 
-    fun addCpTemplateCommand(command: String, own: String, domain: String, templatePath: String): String {
+    fun createCpTemplateCommand(own: String, domain: String, templatePath: String): String {
         val destPath = constructDomainPath(own, domain)
-        val templateCpComm = " && shopt -s dotglob && \\cp -r $templatePath* $destPath && chown -R  $own:$own $destPath"
-        return command + templateCpComm
+        return " && shopt -s dotglob && \\cp -r $templatePath* $destPath && chown -R  $own:$own $destPath"
     }
 
     private fun getFromReader(reader: BufferedReader): List<String> = reader.lines().collect(toList())

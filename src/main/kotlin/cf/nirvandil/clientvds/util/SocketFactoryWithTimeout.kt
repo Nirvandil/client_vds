@@ -13,10 +13,7 @@ class SocketFactoryWithTimeout : SocketFactory {
 
     @SneakyThrows
     override fun createSocket(host: String, port: Int): Socket {
-        val socket = Socket()
-        val timeout = 5000
-        socket.connect(InetSocketAddress(host, port), timeout)
-        return socket
+        return Socket().apply { connect(InetSocketAddress(host, port), TIMEOUT) }
     }
 
     @Throws(IOException::class)
