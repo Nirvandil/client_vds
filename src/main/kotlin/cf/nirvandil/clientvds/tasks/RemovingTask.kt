@@ -1,6 +1,7 @@
 package cf.nirvandil.clientvds.tasks
 
 import cf.nirvandil.clientvds.model.DomainData
+import cf.nirvandil.clientvds.model.DomainDescriptor
 import cf.nirvandil.clientvds.service.DomainsManipulator
 import cf.nirvandil.clientvds.service.impl.DigitalOceanClientImpl
 import lombok.SneakyThrows
@@ -29,11 +30,11 @@ class RemovingTask(data: DomainData,
     override fun call(): Map<String, List<String>> {
         val fullWork = data.domains.size.toLong()
         var done = 0L
-        domainsManipulator.users
+        //domainsManipulator.users
         //Into map we will put any errors that occurs while adding domain
         val result = HashMap<String, MutableList<String>>()
         data.domains.forEach { domain ->
-            val returnCode = domainsManipulator.removeDomain(domain, data.owner)
+            val returnCode = domainsManipulator.removeDomain(DomainDescriptor(domain, data.owner))
             var digitalAnswer = ""
             if (data.token.isNotBlank()) {
                 digitalAnswer = digitalOceanClient.removeDomain(domain, data.token)

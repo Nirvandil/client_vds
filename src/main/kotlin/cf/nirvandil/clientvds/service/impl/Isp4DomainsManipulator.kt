@@ -1,6 +1,8 @@
 package cf.nirvandil.clientvds.service.impl
 
 import cf.nirvandil.clientvds.exc.MainException
+import cf.nirvandil.clientvds.model.DomainDescriptor
+import cf.nirvandil.clientvds.util.ISP4_BIN_PATH
 import cf.nirvandil.clientvds.util.ISP4_GET_USERS_COMMAND
 import cf.nirvandil.clientvds.util.NO_USERS_MESSAGE
 import com.jcraft.jsch.JSchException
@@ -32,14 +34,15 @@ class Isp4DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
         }
 
     @Throws(IOException::class, JSchException::class)
-    override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
-        log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
-        val php = if (phpMod.contains("CGI")) "phpcgi" else "phpmod"
+    override fun addDomain(descriptor: DomainDescriptor): String {
+        val (domain, owner, ip, phpMode, templatePath) = descriptor
+        log.trace("Incoming params for adding: $domain, $ip, $owner, $phpMode, $templatePath")
+        val php = if (phpMode.contains("CGI")) "phpcgi" else "phpmod"
         val commString = buildString {
-            append("/usr/local/ispmgr/sbin/mgrctl -m ispmgr wwwdomain.edit domain=$domain alias=www.$domain " +
-                    "docroot=auto owner=$own admin=admin@$domain autosubdomain=asdnone ip=$ip php=$php sok=ok")
+            append("$ISP4_BIN_PATH -m ispmgr wwwdomain.edit domain=$domain alias=www.$domain " +
+                    "docroot=auto owner=$owner admin=admin@$domain autosubdomain=asdnone ip=$ip php=$php sok=ok")
             if (templatePath.isNotBlank() && checkPathExist(templatePath))
-                append(createCpTemplateCommand(own, domain, templatePath))
+                append(createCpTemplateCommand(owner, domain, templatePath))
         }
         log.debug("Command to run for add domain $commString")
         super.getCommandOutput(commString).forEach { answer ->
@@ -62,9 +65,11 @@ class Isp4DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
     }
 
     @Throws(IOException::class, JSchException::class)
-    override fun removeDomain(domain: String, owner: String): String {
-        return super.getCommandOutput("/usr/local/ispmgr/sbin/mgrctl -m ispmgr wwwdomain.delete elid=$domain " +
-                "wwwdomain.delete.confirm elid=$domain sok=ok")[0]
+    override fun removeDomain(descriptor: DomainDescriptor): String {
+        with(descriptor) {
+            return super.getCommandOutput("$ISP4_BIN_PATH -m ispmgr wwwdomain.delete elid=$domain " +
+                    "wwwdomain.delete.confirm elid=$domain sok=ok")[0]
+        }
     }
 
     @Throws(IOException::class, JSchException::class)

@@ -1,6 +1,7 @@
 package cf.nirvandil.clientvds.tasks
 
 import cf.nirvandil.clientvds.model.DomainData
+import cf.nirvandil.clientvds.model.DomainDescriptor
 import cf.nirvandil.clientvds.service.DomainsManipulator
 import cf.nirvandil.clientvds.service.impl.DigitalOceanClientImpl
 import javafx.concurrent.Task
@@ -24,18 +25,19 @@ import lombok.SneakyThrows
  */
 open class AddingTask(protected val data: DomainData,
                       protected val domainsManipulator: DomainsManipulator) : Task<Map<String, List<String>>>() {
-    private val digitalOceanClient = DigitalOceanClientImpl()
+    private val doClient = DigitalOceanClientImpl()
 
     @SneakyThrows
     override fun call(): Map<String, List<String>> {
-        val fullWork = data.domains.size.toLong()
-        var done = 0L
-        domainsManipulator.users
+        //domainsManipulator.users
         //Into map we will put any errors that occurs while adding domain
         val result = HashMap<String, MutableList<String>>()
+        val fullWork = data.domains.size.toLong()
+        var done = 0L
         data.domains.forEach { domain ->
-            val returnCode = domainsManipulator.addDomain(domain, data.ip, data.owner, data.phpMode, data.templatePath)
-            val digitalOceanAnswer = if (data.token.isNotBlank()) digitalOceanClient.addDomain(domain, data.ip, data.token) else ""
+            val descriptor = DomainDescriptor(domain, data.owner, data.ip, data.phpMode, data.templatePath)
+            val returnCode = domainsManipulator.addDomain(descriptor)
+            val doAnswer = if (data.token.isNotBlank()) doClient.addDomain(domain, data.ip, data.token) else ""
             updateProgress(++done, fullWork)
             Thread.sleep(100)
             if (returnCode.isNotEmpty()) {
@@ -51,8 +53,9 @@ open class AddingTask(protected val data: DomainData,
                             "вручную, после чего удалить файл, на который укажет ISPmanager 4."
                     else -> ""
                 }
-                if (digitalOceanAnswer.isNotEmpty()) {
-                    val oceanMessage = "Ошибка добавления $domain на Digital Ocean (возможно, токен устарел или домен уже существует)"
+                if (doAnswer.isNotEmpty()) {
+                    val oceanMessage = "Ошибка добавления $domain на Digital Ocean " +
+                            "(возможно, токен устарел или домен уже существует)"
                     putCarefully(result, oceanMessage, domain)
                 }
                 putCarefully(result, message, domain)
@@ -64,7 +67,7 @@ open class AddingTask(protected val data: DomainData,
     internal fun putCarefully(target: MutableMap<String, MutableList<String>>, message: String, domain: String) {
         when {
             target.containsKey(domain) -> target[domain]?.add(message)
-            else -> target[domain] = arrayListOf(message)
+            else -> target[domain] = mutableListOf(message)
         }
     }
 }

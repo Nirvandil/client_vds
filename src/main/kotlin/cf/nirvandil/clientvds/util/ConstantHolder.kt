@@ -56,6 +56,8 @@ const val LOCALHOST = "127.0.0.1"
 const val TIMEOUT = 5000
 const val NOT_SUPPORTED = "Операция не поддерживается!"
 const val VESTA_PATH = "/usr/local/vesta"
+const val ISP4_BIN_PATH = "/usr/local/ispmgr/sbin/mgrctl"
+const val ISP5_BIN_PATH = "/usr/local/mgr5/sbin/mgrctl"
 const val VESTA_VAR = "VESTA=$VESTA_PATH"
 const val MAX_DOMAINS = 200
 const val IP_INVALID_MESSAGE = "IP-адрес не является корректным адресом IPv4!"

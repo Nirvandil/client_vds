@@ -1,6 +1,7 @@
 package cf.nirvandil.clientvds.service
 
 import cf.nirvandil.clientvds.exc.MainException
+import cf.nirvandil.clientvds.model.DomainDescriptor
 import com.jcraft.jsch.JSchException
 
 import java.io.IOException
@@ -29,10 +30,10 @@ interface DomainsManipulator {
         get
 
     @Throws(IOException::class, JSchException::class, MainException::class)
-    fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String
+    fun addDomain(descriptor: DomainDescriptor): String
 
     @Throws(IOException::class, JSchException::class, MainException::class)
-    fun removeDomain(domain: String, owner: String): String
+    fun removeDomain(descriptor: DomainDescriptor): String
 
     @Throws(IOException::class, JSchException::class, MainException::class)
     fun askUserOfPanel(users: List<String>): String

@@ -96,7 +96,7 @@ abstract class AbstractDomainsManipulator(private val session: Session) : Domain
 
     @Throws(IOException::class, JSchException::class)
     fun checkPathExist(path: String): Boolean {
-        return getCommandOutput("test -e $path && echo 0")[0].toInt() == 0
+        return getCommandOutput("test -e $path && echo 0 || echo 1").first().toInt() == 0
     }
 
     abstract fun constructDomainPath(owner: String, domainName: String): String

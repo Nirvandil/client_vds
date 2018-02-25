@@ -1,6 +1,8 @@
 package cf.nirvandil.clientvds.service.impl
 
 import cf.nirvandil.clientvds.exc.MainException
+import cf.nirvandil.clientvds.model.DomainDescriptor
+import cf.nirvandil.clientvds.util.ISP5_BIN_PATH
 import cf.nirvandil.clientvds.util.ISP5_GET_USERS_COMMAND
 import cf.nirvandil.clientvds.util.NOT_SUPPORTED
 import cf.nirvandil.clientvds.util.NO_USERS_MESSAGE
@@ -30,21 +32,22 @@ class Isp5DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
         @Throws(IOException::class, JSchException::class, MainException::class)
         get() {
             val users = getCommandOutput(ISP5_GET_USERS_COMMAND)
-            return if (users.isEmpty())
-                throw MainException(NO_USERS_MESSAGE)
-            else
+            return if (users.isNotEmpty())
                 users
+            else
+                throw MainException(NO_USERS_MESSAGE)
         }
 
     @Throws(IOException::class, JSchException::class)
-    override fun addDomain(domain: String, ip: String, own: String, phpMod: String, templatePath: String): String {
-        log.trace("Incoming params for adding: $domain, $ip, $own, $phpMod, $templatePath")
-        val php = if (phpMod.contains("cgi")) "php_mode_cgi" else "php_mode_mod"
+    override fun addDomain(descriptor: DomainDescriptor): String {
+        val (domain, owner, ip, phpMode, templatePath) = descriptor
+        log.trace("Incoming params for adding: $domain, $ip, $owner, $phpMode, $templatePath")
+        val php = if (phpMode.contains("cgi")) "php_mode_cgi" else "php_mode_mod"
         val commString = buildString {
-            append("/usr/local/mgr5/sbin/mgrctl -m ispmgr webdomain.edit name=$domain alias=www.$domain " +
-                    "docroot=auto owner=$own email=admin@$domain ip=$ip php=on php_mode=$php sok=ok")
+            append("$ISP5_BIN_PATH -m ispmgr webdomain.edit name=$domain alias=www.$domain " +
+                    "docroot=auto owner=$owner email=admin@$domain ip=$ip php=on php_mode=$php sok=ok")
             if (templatePath.isNotBlank() && checkPathExist(templatePath))
-                append(createCpTemplateCommand(own, domain, templatePath))
+                append(createCpTemplateCommand(owner, domain, templatePath))
         }
         log.debug(commString)
         getCommandOutput(commString).forEach { answer ->
@@ -60,7 +63,7 @@ class Isp5DomainsManipulator(session: Session) : AbstractDomainsManipulator(sess
         return ""
     }
 
-    override fun removeDomain(domain: String, owner: String): String {
+    override fun removeDomain(descriptor: DomainDescriptor): String {
         throw MainException(NOT_SUPPORTED)
     }
 
