@@ -48,6 +48,7 @@ object DesktopApi {
         val os = os
         if (os.isLinux) {
             if (runCommand("kde-open", "%s", what)) return
+            if (runCommand("kde5-open", "%s", what)) return
             if (runCommand("gnome-open", "%s", what)) return
             if (runCommand("xdg-open", "%s", what)) return
         }

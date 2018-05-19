@@ -2,10 +2,12 @@ package cf.nirvandil.clientvds.service.impl
 
 import cf.nirvandil.clientvds.exc.MainException
 import cf.nirvandil.clientvds.service.Validator
+import cf.nirvandil.clientvds.util.DOMAIN_INVALID_MESSAGE
+import cf.nirvandil.clientvds.util.IP_INVALID_MESSAGE
+import cf.nirvandil.clientvds.util.MAX_DOMAINS
 import org.apache.commons.validator.routines.DomainValidator
 import org.apache.commons.validator.routines.InetAddressValidator
 
-private const val MAX_DOMAINS = 200
 class ValidatorImpl : Validator {
     private val domainValidator = DomainValidator.getInstance()
     private val ipValidator = InetAddressValidator.getInstance()
@@ -15,15 +17,15 @@ class ValidatorImpl : Validator {
         if (domains.size > MAX_DOMAINS)
             throw MainException("За один раз можно добавить не более $MAX_DOMAINS доменов!")
         if (domains.any { !domainValidator.isValid(it) })
-            throw MainException("Как минимум одно из доменных имён некорректно!")
+            throw MainException(DOMAIN_INVALID_MESSAGE)
         return domains
     }
 
     override fun validateIpAddress(ip: String) {
         if (!ipValidator.isValidInet4Address(ip))
-            throw MainException("IP-адрес не является корректным адресом IPv4!")
+            throw MainException(IP_INVALID_MESSAGE)
     }
 
-    private fun transformToDomains(doms: String): List<String> = doms.split("\n".toRegex()).map { it.trim() }
+    private fun transformToDomains(domains: String): List<String> = domains.split("\n".toRegex()).map { it.trim() }
 
 }
